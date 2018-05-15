@@ -1,0 +1,14 @@
+[package]
+name = "NumRu"
+version = "0.1.0"
+authors = ["SamirJoshi <samirjoshi2018@u.northwestern.edu>"]
+
+[lib]
+name = "num_ru"
+path = "src/lib.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+
+[dependencies]
