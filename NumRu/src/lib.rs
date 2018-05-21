@@ -7,7 +7,6 @@ pub fn test_function() {
     println!("hello");
 }
 
-
 pub fn amin<A, D>(arr: &mut Array<A, D>) -> A 
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
@@ -36,7 +35,8 @@ pub fn amax<A, D>(arr: &mut Array<A, D>) -> A
     (*max_elem).clone()
 }
 
-pub fn sin<A, D>(arr: &mut Array<A, D>) -> Array<A, D> 
+/// Computes element-wise sin on an ndarray Array
+pub fn sin<A, D>(arr: &Array<A, D>) -> Array<A, D> 
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {   
@@ -111,10 +111,10 @@ mod trig_tests {
     #[test]
     fn sin_tests() {
         let pi = std::f64::consts::PI;
-        let mut input_arr = array![pi, pi / 2.0];
-        let mut expected_arr = array![0.0, 1.0];
+        let input_arr = array![pi, pi / 2.0];
+        let expected_arr = array![0.0, 1.0];
         let mut expected_iter = expected_arr.iter();
-        let mut res_arr = sin(&mut input_arr);
+        let res_arr = sin(&input_arr);
         let mut res_iter = res_arr.iter();
 
         while let Some(r) = res_iter.next() {
