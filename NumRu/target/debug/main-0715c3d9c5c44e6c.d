@@ -1,1 +1,0 @@
-/home/sj/Documents/northwestern/spring2018/rust/NumRu/NumRu/target/debug/main-0715c3d9c5c44e6c: /home/sj/Documents/northwestern/spring2018/rust/NumRu/NumRu/src/lib.rs /home/sj/Documents/northwestern/spring2018/rust/NumRu/NumRu/src/main.rs
