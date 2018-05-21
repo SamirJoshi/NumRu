@@ -12,3 +12,5 @@ name = "main"
 path = "src/main.rs"
 
 [dependencies]
+ndarray = "0.11.2"
+num-traits = "0.2"
