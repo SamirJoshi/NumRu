@@ -1,3 +1,5 @@
-NumRu/target/*
+/target
+**/*.rs.bk
+
 .idea
 .idea/*
