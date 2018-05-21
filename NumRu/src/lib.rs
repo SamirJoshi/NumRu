@@ -7,7 +7,7 @@ pub fn test_function() {
     println!("hello");
 }
 
-pub fn amin<A, D>(arr: &mut Array<A, D>) -> A 
+pub fn amin<A, D>(arr: &Array<A, D>) -> A 
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
 {
@@ -21,7 +21,7 @@ pub fn amin<A, D>(arr: &mut Array<A, D>) -> A
     (*min_elem).clone()
 }
 
-pub fn amax<A, D>(arr: &mut Array<A, D>) -> A 
+pub fn amax<A, D>(arr: &Array<A, D>) -> A 
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
 {
@@ -51,30 +51,30 @@ mod amin_tests {
 
     #[test]
     fn amin_test_1d(){
-        let mut arr = array![5, 3, 5, 2, 1];
-        assert_eq!(amin(&mut arr), 1);
-        let mut arr2 = array![8, 8, 8, 8, 8];
-        assert_eq!(amin(&mut arr2), 8);
-        let mut arr3 = array![1, 3, 5, 2, 1];
-        assert_eq!(amin(&mut arr3), 1);
-        let mut arr5 = array![4, 3, -1, 2, 1];
-        assert_eq!(amin(&mut arr5), -1);
+        let arr = array![5, 3, 5, 2, 1];
+        assert_eq!(amin(&arr), 1);
+        let arr2 = array![8, 8, 8, 8, 8];
+        assert_eq!(amin(&arr2), 8);
+        let arr3 = array![1, 3, 5, 2, 1];
+        assert_eq!(amin(&arr3), 1);
+        let arr5 = array![4, 3, -1, 2, 1];
+        assert_eq!(amin(&arr5), -1);
     }
 
     #[test]
     fn amin_test_2d() {
-        let mut arr = array![[5, 3], [1, 2]];
-        assert_eq!(amin(&mut arr), 1);
-        let mut arr2 = array![[8, 8], [8, 8]];
-        assert_eq!(amin(&mut arr2), 8);
+        let arr = array![[5, 3], [1, 2]];
+        assert_eq!(amin(&arr), 1);
+        let arr2 = array![[8, 8], [8, 8]];
+        assert_eq!(amin(&arr2), 8);
     }
 
     #[test]
     fn amin_test_3d() {
-        let mut arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
-        assert_eq!(amin(&mut arr), 0);
-        let mut arr2 = array![[[-5, -6], [-7, 0]], [[-1, -2], [-3, -4]]];
-        assert_eq!(amin(&mut arr2), -7);
+        let arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
+        assert_eq!(amin(&arr), 0);
+        let arr2 = array![[[-5, -6], [-7, 0]], [[-1, -2], [-3, -4]]];
+        assert_eq!(amin(&arr2), -7);
     }
 }
 
@@ -84,22 +84,22 @@ mod amax_tests {
 
     #[test]
     fn amax_test_1d(){
-        let mut arr = array![5, 3, 5, 2, 1];
-        assert_eq!(amax(&mut arr), 5);
-        let mut arr2 = array![8, 8, 8, 8, 8];
-        assert_eq!(amax(&mut arr2), 8);
-        let mut arr3 = array![1, 3, 5, 2, 1];
-        assert_eq!(amax(&mut arr3), 5);
-        let mut arr5 = array![4, 3, -1, 2, 1];
-        assert_eq!(amax(&mut arr5), 4);
+        let arr = array![5, 3, 5, 2, 1];
+        assert_eq!(amax(&arr), 5);
+        let arr2 = array![8, 8, 8, 8, 8];
+        assert_eq!(amax(&arr2), 8);
+        let arr3 = array![1, 3, 5, 2, 1];
+        assert_eq!(amax(&arr3), 5);
+        let arr5 = array![4, 3, -1, 2, 1];
+        assert_eq!(amax(&arr5), 4);
     }
 
     #[test]
     fn amax_test_3d() {
-        let mut arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
-        assert_eq!(amax(&mut arr), 7);
-        let mut arr2 = array![[[-5, -6], [-7, 0]], [[-1, -2], [-3, -4]]];
-        assert_eq!(amax(&mut arr2), 0);
+        let arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
+        assert_eq!(amax(&arr), 7);
+        let arr2 = array![[[-5, -6], [-7, 0]], [[-1, -2], [-3, -4]]];
+        assert_eq!(amax(&arr2), 0);
     }
 }
 
