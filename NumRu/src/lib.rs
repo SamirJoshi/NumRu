@@ -3,11 +3,15 @@ extern crate ndarray;
 extern crate num_traits;
 use ndarray::*;
 
+
+pub mod math;
+
 pub fn test_function() {
     println!("hello");
 }
 
-pub fn amin<A, D>(arr: &Array<A, D>) -> A 
+/// Retrieves the min element from an ndarray Array
+pub fn amin<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
 {
@@ -21,7 +25,8 @@ pub fn amin<A, D>(arr: &Array<A, D>) -> A
     (*min_elem).clone()
 }
 
-pub fn amax<A, D>(arr: &Array<A, D>) -> A 
+/// Retrieves the max element from an ndarray Array
+pub fn amax<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
 {
@@ -33,16 +38,6 @@ pub fn amax<A, D>(arr: &Array<A, D>) -> A
         }
     }
     (*max_elem).clone()
-}
-
-/// Computes element-wise sin on an ndarray Array
-pub fn sin<A, D>(arr: &Array<A, D>) -> Array<A, D> 
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{   
-    //TODO: change to actually handle the error
-    let sin_arr = Array::from_iter(arr.iter().map(|x| x.sin()));
-    sin_arr.into_shape(arr.raw_dim()).unwrap()
 }
 
 #[cfg(test)]
@@ -102,28 +97,6 @@ mod amax_tests {
         assert_eq!(amax(&arr2), 0);
     }
 }
-
-#[cfg(test)]
-mod trig_tests {
-    use super::{sin};
-    use std;
-
-    #[test]
-    fn sin_tests() {
-        let pi = std::f64::consts::PI;
-        let input_arr = array![pi, pi / 2.0];
-        let expected_arr = array![0.0, 1.0];
-        let mut expected_iter = expected_arr.iter();
-        let res_arr = sin(&input_arr);
-        let mut res_iter = res_arr.iter();
-
-        while let Some(r) = res_iter.next() {
-            let exp = expected_iter.next().unwrap();
-            assert!((r - exp) < 0.000001);
-        }
-    }
-}
-
 
 //#[cfg(test)]
 //mod fast_matrix_multiply {
