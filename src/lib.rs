@@ -2,6 +2,8 @@
 extern crate ndarray;
 extern crate num_traits;
 
+#[macro_use]
+extern crate error_chain;
 
 pub mod math;
 pub mod stats;

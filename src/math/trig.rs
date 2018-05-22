@@ -36,7 +36,7 @@ pub fn tan<A, D>(arr: &Array<A, D>) -> Array<A, D>
 }
 
 /// Computes element-wise arc sine on an ndarray Array
-pub fn asin<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn arcsin<A, D>(arr: &Array<A, D>) -> Array<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
@@ -46,7 +46,7 @@ pub fn asin<A, D>(arr: &Array<A, D>) -> Array<A, D>
 }
 
 /// Computes element-wise arc cosine on an ndarray Array
-pub fn acos<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn arccos<A, D>(arr: &Array<A, D>) -> Array<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
@@ -56,12 +56,46 @@ pub fn acos<A, D>(arr: &Array<A, D>) -> Array<A, D>
 }
 
 /// Computes element-wise arc tangent on an ndarray Array
-pub fn atan<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn arctan<A, D>(arr: &Array<A, D>) -> Array<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
     //TODO: change to actually handle the error
     let res_arr = Array::from_iter(arr.iter().map(|x| x.atan()));
+    res_arr.into_shape(arr.raw_dim()).unwrap()
+}
+
+/// Computes element-wise arc tangent on an ndarray Array
+// TODO DO THIS
+pub fn sinh<A, D>(arr: &Array<A, D>) -> Array<A, D>
+    where D: Dimension,
+      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
+{
+    //TODO: change to actually handle the error
+    let res_arr = Array::from_iter(arr.iter().map(|x| x.sinh()));
+    res_arr.into_shape(arr.raw_dim()).unwrap()
+}
+
+
+/// Computes element-wise arc tangent on an ndarray Array
+// TODO DO THIS
+pub fn cosh<A, D>(arr: &Array<A, D>) -> Array<A, D>
+    where D: Dimension,
+      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
+{
+    //TODO: change to actually handle the error
+    let res_arr = Array::from_iter(arr.iter().map(|x| x.cosh()));
+    res_arr.into_shape(arr.raw_dim()).unwrap()
+}
+
+/// Computes element-wise arc tangent on an ndarray Array
+// TODO DO THIS
+pub fn tanh<A, D>(arr: &Array<A, D>) -> Array<A, D>
+    where D: Dimension,
+      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
+{
+    //TODO: change to actually handle the error
+    let res_arr = Array::from_iter(arr.iter().map(|x| x.tanh()));
     res_arr.into_shape(arr.raw_dim()).unwrap()
 }
 
