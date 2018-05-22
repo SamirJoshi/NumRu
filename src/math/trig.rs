@@ -2,6 +2,7 @@ use ndarray::*;
 use std;
 use num_traits;
 
+
 /// Computes element-wise sine on an ndarray Array
 pub fn sin<A, D>(arr: &Array<A, D>) -> Array<A, D>
     where D: Dimension,
@@ -71,6 +72,8 @@ mod trig_tests {
     use std;
     use super::{sin, cos, tan};
 
+    const TAN_INF : f64 = 16331239353195370.0;
+
     #[test]
     fn sin_tests() {
         let pi = std::f64::consts::PI;
@@ -89,14 +92,14 @@ mod trig_tests {
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 
-    //#[test]
-    //fn tan_tests() {
-        //let pi = std::f64::consts::PI;
-        //let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi];
-        //let expected_arr = array![0.0, 1.0, std::f64::INFINITY, 0.0];
-        //let res_arr = tan(&input_arr);
-        //assert!(compare_arrays(&expected_arr, &res_arr));
-    //}
+    #[test]
+    fn tan_tests() {
+        let pi = std::f64::consts::PI;
+        let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi];
+        let expected_arr = array![0.0, 1.0, TAN_INF, 0.0];
+        let res_arr = tan(&input_arr);
+        assert!(compare_arrays(&expected_arr, &res_arr));
+    }
 
     fn compare_arrays<D>(expected_arr: &Array<f64, D>, res_arr: &Array<f64, D>) -> bool
         where D: Dimension,
