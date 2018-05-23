@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate ndarray;
 extern crate num_traits;
+extern crate chrono;
 
 #[macro_use]
 extern crate error_chain;

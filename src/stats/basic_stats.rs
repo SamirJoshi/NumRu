@@ -2,6 +2,27 @@ use ndarray::*;
 use std;
 
 /// Retrieves the min element from an ndarray Array
+/// 
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// # extern crate chrono;
+/// use ndarray::*;
+/// use num_ru::stats::basic_stats::*;
+/// use chrono::{NaiveDate, NaiveDateTime};
+///
+/// # fn main(){
+/// let arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
+/// assert_eq!(amin(&arr), 0);
+/// let dt1: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11);
+/// let dt2: NaiveDateTime = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
+/// let dt3: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(13, 10, 11);
+/// let arr2 = array![dt3, dt1, dt2];
+/// assert_eq!(amin(&arr2), dt1);
+/// # }
+/// ```
 pub fn amin<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
@@ -17,6 +38,26 @@ pub fn amin<A, D>(arr: &Array<A, D>) -> A
 }
 
 /// Retrieves the max element from an ndarray Array
+/// 
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// # extern crate chrono;
+/// use ndarray::*;
+/// use num_ru::stats::basic_stats::*;
+/// use chrono::{NaiveDate, NaiveDateTime};
+/// # fn main(){
+///     let arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
+///     assert_eq!(amax(&arr), 7);
+///     let dt1: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11);
+///     let dt2: NaiveDateTime = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
+///     let dt3: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(13, 10, 11);
+///     let arr2 = array![dt3, dt1, dt2];
+///     assert_eq!(amax(&arr2), dt2);
+/// # }
+/// ```
 pub fn amax<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
@@ -34,6 +75,7 @@ pub fn amax<A, D>(arr: &Array<A, D>) -> A
 #[cfg(test)]
 mod amin_tests {
     use super::amin;
+    use chrono::{NaiveDate, NaiveDateTime};
 
     #[test]
     fn amin_test_1d(){
@@ -61,6 +103,15 @@ mod amin_tests {
         assert_eq!(amin(&arr), 0);
         let arr2 = array![[[-5, -6], [-7, 0]], [[-1, -2], [-3, -4]]];
         assert_eq!(amin(&arr2), -7);
+    }
+
+    #[test]
+    fn amin_not_int() {
+        let dt1: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11);
+        let dt2: NaiveDateTime = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
+        let dt3: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(13, 10, 11);
+        let arr = array![dt3, dt1, dt2];
+        assert_eq!(amin(&arr), dt1);
     }
 }
 
