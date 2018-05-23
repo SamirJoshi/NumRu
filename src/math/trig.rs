@@ -166,6 +166,33 @@ pub fn arctan<A, D>(arr: &Array<A, D>) -> Array<A, D>
     res_arr.into_shape(arr.raw_dim()).unwrap()
 }
 
+
+/// Convert from radians to degrees 
+pub fn deg2rad<D>(arr: &Array<f64, D>) -> Array<f64, D>
+    where D: Dimension,
+{
+    //TODO: change to actually handle the error 
+    //TODO: implement for a generic type
+    let conv_factor: f64 = 180.0 / std::f64::consts::PI;
+
+    let res_arr = arr.clone();
+    let res_arr_2 = &res_arr * conv_factor;
+    res_arr_2.into_shape(arr.raw_dim()).unwrap()
+}
+
+/// Convert from degrees to radians 
+pub fn rad2deg<D>(arr: &Array<f64, D>) -> Array<f64, D>
+    where D: Dimension,
+{
+    //TODO: change to actually handle the error 
+    //TODO: implement for a generic type
+    let conv_factor: f64 = std::f64::consts::PI / 180.0;
+
+    let res_arr = arr.clone();
+    let res_arr_2 = &res_arr * conv_factor;
+    res_arr_2.into_shape(arr.raw_dim()).unwrap()
+}
+
 pub fn compare_arrays<D>(expected_arr: &Array<f64, D>, res_arr: &Array<f64, D>) -> bool
     where D: Dimension,
 {
@@ -181,7 +208,6 @@ pub fn compare_arrays<D>(expected_arr: &Array<f64, D>, res_arr: &Array<f64, D>) 
     }
     true
 }
-
 
 #[cfg(test)]
 mod compare_arrays_tests {
