@@ -3,6 +3,7 @@ use std;
 use std::thread;
 use std::sync::{Arc, Mutex};
 use crossbeam;
+use ndarray_parallel::*;
 
 /// Retrieves the min element from an ndarray Array
 /// 
@@ -92,6 +93,26 @@ pub fn amax_simple<A, D>(arr: &Array<A, D>) -> A
     (*max_elem).clone()
 }
 
+
+// pub fn amax_simple_rayon<'a, A, D>(arr: &'a Array<A, D>) -> A
+//     where D: Dimension,
+//       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy,
+//       Array<A, D> : NdarrayIntoParallelRefIterator<'a>,
+// {
+//     println!("in simple - amax");
+//     let num_elem = arr.len();
+//     let mut arr_owned = arr.clone();
+//     let mut arr_iter = arr_owned.par_iter();
+//     let mut arr_item = arr.iter();
+//     let mut max_elem = arr_item.next().unwrap();
+//     while let Some(curr_item) = arr_item.next() {
+//         if curr_item > max_elem {
+//             max_elem = curr_item;
+//         }
+//     }
+//     (*max_elem).clone()
+// }
+
 pub fn amax_parallelized<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync + std::marker::Send,
@@ -105,17 +126,19 @@ pub fn amax_parallelized<A, D>(arr: &Array<A, D>) -> A
     // let num_splits = (num_elem as f64).log2() as usize; // TODO change to be log n??
 
     let mut arr_iter = arr.iter();
+    let mut arr_arc = Arc::new(arr);
     let thread_max = Arc::new(Mutex::new(arr_iter.next().unwrap()));
+
     crossbeam::scope(|scope| {
         for i in 0 .. num_splits {
-            let mut curr_iter = arr_iter.clone();
+            // let mut curr_iter = arr_iter_arc.clone().iter();
             let thread_max = thread_max.clone();
             let skip_val = i * num_elem / num_splits as usize;
             let mut end_val = (i + 1) * num_elem / num_splits as usize;
             if i == (num_splits - 1) {
                 end_val = num_elem;
             }
-            let mut offset_iter = curr_iter.skip(skip_val);
+            let mut offset_iter = arr_arc.iter().skip(skip_val);
             scope.spawn(move || {
                 let mut max_elem = offset_iter.next().unwrap();
                 let mut thread_i = skip_val;
@@ -135,8 +158,8 @@ pub fn amax_parallelized<A, D>(arr: &Array<A, D>) -> A
         }
     });
 
-    let mut guard = thread_max.lock().unwrap();
-    (*guard).clone()
+    let mut max = thread_max.lock().unwrap();
+    (*max).clone()
 }
 
 #[cfg(test)]

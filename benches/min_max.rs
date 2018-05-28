@@ -10,6 +10,13 @@ use ndarray::*;
 use num_ru::*;
 use num_ru::stats::basic_stats::*;
 
+// remove 
+extern crate crossbeam;
+use std::thread;
+use std::sync::{Arc, Mutex};
+
+
+
 #[bench]
 fn arr_max_bench_1d(b: &mut Bencher) {
     b.iter(|| {
@@ -44,6 +51,16 @@ fn arr_max_simple(b: &mut Bencher) {
 }
 
 #[bench]
+fn arr_max_simple_with_arc(b: &mut Bencher) {
+    b.iter(|| {
+        let mut big_arr = Array::zeros((100, 100, 100, 100));
+        big_arr[[2, 3, 4, 5]] = 15;
+        let a = Arc::new(big_arr);
+    });
+}
+
+
+#[bench]
 fn arr_max_parallel(b: &mut Bencher) {
     b.iter(|| {
         let mut big_arr = Array::zeros((100, 100, 100, 100));
@@ -51,3 +68,12 @@ fn arr_max_parallel(b: &mut Bencher) {
         assert_eq!(amax_parallelized(&big_arr), 15);
     });
 }
+
+// #[bench]
+// fn arr_max_rayon(b: &mut Bencher) {
+//     b.iter(|| {
+//         let mut big_arr = Array::zeros((100, 100, 100, 100));
+//         big_arr[[2, 3, 4, 5]] = 15;
+//         assert_eq!(amax_simple_rayon(&big_arr), 15);
+//     });
+// }
