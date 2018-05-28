@@ -2,6 +2,7 @@
 extern crate ndarray;
 extern crate num_traits;
 extern crate chrono;
+extern crate crossbeam;
 
 #[macro_use]
 extern crate error_chain;
