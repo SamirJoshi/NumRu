@@ -1,14 +1,12 @@
 //! Arithmetics module implements Numpy routines listed at
 //! https://docs.scipy.org/doc/numpy/reference/routines.math.html#arithmetic-operations
 //!
-//!
+//! add, multiply, divide and subtract already handled by ndarray lib
 
 use ndarray::*;
 use num_traits;
 use std::{fmt::Debug, marker::Copy, ops::Mul};
 
-/// add
-/// takes two ndarrays and adds them
 
 /// reciprocal
 /// Return the reciprocal of the argument, element-wise.
@@ -52,12 +50,6 @@ where
     arr.mapv(|x| x.abs().neg())
 }
 
-/// multiply
-/// Multiply arguments element-wise.
-
-/// divide
-/// Returns a true division of the inputs, element-wise.
-
 /// power
 /// First array elements raised to powers from second array, element-wise.
 // fn power<A, D>(arr: &Array<A, D>, exp: usize) -> Array<A, D>
@@ -67,9 +59,6 @@ where
 // {
 
 // }
-
-/// subtract
-/// Subtract arguments, element-wise.
 
 /// floor_divide
 /// Return the largest integer smaller or equal to the division of the inputs.
