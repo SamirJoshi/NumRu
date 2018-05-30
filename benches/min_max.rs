@@ -56,6 +56,25 @@ fn arr_max_large(b: &mut Bencher) {
 }
 
 #[bench]
+fn arr_max_large_rayon_ref(b: &mut Bencher) {
+    b.iter(|| {
+        let mut big_arr = RcArray::zeros((100, 100, 100, 100));
+        big_arr[[25, 25, 25, 25]] = 15;
+        assert_eq!(amax_simple_rayon_ref(&big_arr), 15);
+        big_arr[[25, 25, 25, 25]] = 25;
+    });
+}
+
+#[bench]
+fn arr_max_large_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let mut big_arr = Array::zeros((100, 100, 100, 100));
+        big_arr[[25, 25, 25, 25]] = 15;
+        assert_eq!(amax_simple_rayon(big_arr), 15);
+    });
+}
+
+#[bench]
 fn arr_min_mid(b: &mut Bencher) {
     b.iter(|| {
         let mut big_arr = Array::zeros((50, 50, 50));
@@ -92,16 +111,6 @@ fn mean_large(b: &mut Bencher) {
 }
 
 #[bench]
-fn range_mid(b: &mut Bencher) {
-    b.iter(|| {
-        let mut big_arr = Array::zeros((50, 50, 50));
-        big_arr[[25, 25, 25]] = 5.0;
-        big_arr[[26, 26, 26]] = -5.0;
-        assert_eq!(mean(&big_arr), 10.0);
-    });
-}
-
-#[bench]
 fn variance_mid(b: &mut Bencher) {
     b.iter(|| {
         let mut big_arr = Array::zeros((50, 50, 50));
@@ -109,22 +118,3 @@ fn variance_mid(b: &mut Bencher) {
         assert_eq!(var(&big_arr), 0.0);
     });
 }
-
-
-//#[bench]
-//fn arr_max_parallel(b: &mut Bencher) {
-//    b.iter(|| {
-//        let mut big_arr = Array::zeros((100, 100, 100, 100));
-//        big_arr[[2, 3, 4, 5]] = 15;
-//        assert_eq!(amax_parallelized(&big_arr), 15);
-//    });
-//}
-
-// #[bench]
-// fn arr_max_rayon(b: &mut Bencher) {
-//     b.iter(|| {
-//         let mut big_arr = Array::zeros((100, 100, 100, 100));
-//         big_arr[[2, 3, 4, 5]] = 15;
-//         assert_eq!(amax_simple_rayon(&big_arr), 15);
-//     });
-// }

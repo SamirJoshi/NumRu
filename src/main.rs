@@ -7,7 +7,6 @@ use num_ru::*;
 use num_ru::stats::order_stats::*;
 use num_ru::stats::averages::*;
 use num_ru::math::trig::*;
-//use ndarray::prelude::*;
 
 pub fn main() {
     test_function();

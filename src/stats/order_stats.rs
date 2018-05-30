@@ -2,7 +2,8 @@ use ndarray::*;
 use std;
 //use std::sync::{Arc, Mutex};
 //use crossbeam;
-//use ndarray_parallel::prelude::*;
+use ndarray_parallel::prelude::*;
+use ndarray_parallel::*;
 use num_traits;
 
 /// Retrieves the min element from an ndarray Array
@@ -29,7 +30,7 @@ use num_traits;
 /// ```
 pub fn amin<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
-          A: std::fmt::Debug + std::cmp::PartialOrd +  std::marker::Copy,
+          A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy,
 {
     println!("in simple - amax");
     let mut arr_iter = arr.iter();
@@ -78,7 +79,7 @@ pub fn amax<A, D>(arr: &Array<A, D>) -> A
 
 pub fn amax_simple<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
-          A: std::fmt::Debug + std::cmp::PartialOrd +  std::marker::Copy,
+          A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy,
 {
     println!("in simple - amax");
     let mut arr_iter = arr.iter();
@@ -94,78 +95,70 @@ pub fn amax_simple<A, D>(arr: &Array<A, D>) -> A
     (*arr_max).clone()
 }
 
-//pub fn amax_simple_rayon<'a, A, D>(arr: &Array<A, D>) -> A
+// Consumes the array but is much more efficient
+pub fn amax_simple_rayon<A, D>(arr: Array<A, D>) -> A
+    where D: Dimension,
+      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync,
+{
+    let max_elem = arr.par_iter()
+        .reduce_with(|a, b| {
+            if a < b {
+                b
+            } else {
+               a
+            }
+        });
+
+    match max_elem {
+        Some(m) => m.clone(),
+        None => panic!("Array of 0 elements")
+    }
+
+}
+pub fn amax_simple_rayon_ref<A, D>(arr: &RcArray<A, D>) -> A
+    where D: Dimension,
+      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync,
+{
+    println!("in rayon - amax");
+    let max_elem = arr.par_iter()
+        .reduce_with(|a:&A, b: &A| {
+            if a < b {
+                b
+            } else {
+               a
+            }
+        });
+
+    println!("MAX VALUE: {:?}", max_elem);
+    match max_elem {
+        Some(m) => m.clone(),
+        None => panic!("Array of 0 elements")
+    }
+
+}
+
+//pub fn amax_simple_rayon_ref<'a, A, D>(arr: &'a mut Array<A, D>) -> A
 //    where D: Dimension,
 //      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync + 'a,
-//          Array<A, D> : NdarrayIntoParallelRefIterator<'a>,
+//          &'a Array<A, D> : NdarrayIntoParallelRefIterator<'a>,
 //{
-//    println!("in simple - amax");
-//    let max_elem = arr.par_iter().max();
+//    println!("in rayon - amax");
+//    let max_elem = arr.par_iter()
+//        .reduce_with(|a:&A, b: &A| {
+//            if a < b {
+//                b
+//            } else {
+//               a
+//            }
+//        });
+//
+//    println!("MAX VALUE: {:?}", max_elem);
 //    match max_elem {
 //        Some(m) => m.clone(),
 //        None => panic!("Array of 0 elements")
 //    }
 //
-//    let mut a = Array2::<f64>::zeros((128, 128));
-//
-//     Parallel versions of regular array methods (ParMap trait)
-//    a.par_map_inplace(|x| *x = x.exp());
-//    a.par_mapv_inplace(f64::exp);
-//
-//     You can also use the parallel iterator directly
-//    a.par_iter_mut().for_each(|x| *x = x.exp());
-//    panic!("ASDF");
 //}
-
-
-
-//pub fn amax_parallelized<A, D>(arr: &Array<A, D>) -> A
-//    where D: Dimension,
-//      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync + std::marker::Send,
-//{
-//    let num_elem = arr.len();
-//    let mut num_splits = 4; // TODO change to be log n??
-//    if num_elem < 10 {
-//        num_splits = 1;
-//    }
-//
-//
-//    let mut arr_iter = arr.iter();
-//    let mut arr_arc = Arc::new(arr);
-//    let thread_max = Arc::new(Mutex::new(arr_iter.next().unwrap()));
-//
-//    crossbeam::scope(|scope| {
-//        for i in 0 .. num_splits {
-//            let thread_max = thread_max.clone();
-//            let skip_val = i * num_elem / num_splits as usize;
-//            let mut end_val = (i + 1) * num_elem / num_splits as usize;
-//            if i == (num_splits - 1) {
-//                end_val = num_elem;
-//            }
-//            let mut offset_iter = arr_arc.iter().skip(skip_val);
-//            scope.spawn(move || {
-//                let mut max_elem = offset_iter.next().unwrap();
-//                let mut thread_i = skip_val;
-//                while let Some(curr_item) = offset_iter.next() {
-//                    if thread_i >= end_val { break; }
-//                    if curr_item > max_elem {
-//                        max_elem = curr_item;
-//                    }
-//                    thread_i += 1;
-//                }
-//                let mut guard = thread_max.lock().unwrap();
-//                if max_elem > (*guard)
-//                {
-//                    *guard = max_elem;
-//                }
-//            });
-//        }
-//    });
-//
-//    let mut max = thread_max.lock().unwrap();
-//    (*max).clone()
-//}
-
 
 /// Returns the percentile of an element in an ndarray Array
 /// Defaults to lower if the element between two values
@@ -272,7 +265,14 @@ mod amin_tests {
 
 #[cfg(test)]
 mod amax_tests {
-    use super::amax;
+    use super::{amax, amax_simple_rayon, amax_simple_rayon_ref};
+    use ndarray::*;
+
+    #[test]
+    fn amax_rayon_test_1d(){
+        let arr = array![5, 3, 5, 2, 1];
+        assert_eq!(amax_simple_rayon(arr), 5);
+    }
 
     #[test]
     fn amax_test_1d(){
