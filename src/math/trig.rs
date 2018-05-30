@@ -211,9 +211,7 @@ pub fn compare_arrays<D>(expected_arr: &Array<f64, D>, res_arr: &Array<f64, D>) 
 
 #[cfg(test)]
 mod compare_arrays_tests {
-    use ndarray::*;
     use super::compare_arrays;
-    // function defintion will not accept different dimensioned elements
 
     #[test]
     fn match_test() {
@@ -239,7 +237,6 @@ mod compare_arrays_tests {
 
 #[cfg(test)]
 mod trig_tests {
-    use ndarray::*;
     use num_traits;
     use std;
     use super::{sin, cos, tan, compare_arrays};

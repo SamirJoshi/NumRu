@@ -1,2 +1,2 @@
-pub mod basic_stats;
-// TODO:change name
+pub mod order_stats;
+pub mod averages;
