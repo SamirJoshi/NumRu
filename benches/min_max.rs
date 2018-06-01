@@ -117,3 +117,12 @@ fn variance_mid(b: &mut Bencher) {
         assert_eq!(var(&big_arr), 0.0);
     });
 }
+
+#[bench]
+fn variance_mid_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let mut big_arr = ArcArray::zeros((50, 50, 50));
+        big_arr[[25, 25, 25]] = 0.0;
+        assert_eq!(var_rayon(&big_arr), 0.0);
+    });
+}

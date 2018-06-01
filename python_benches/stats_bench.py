@@ -41,13 +41,6 @@ def mean_large():
     assert np.mean(arr) == 1
     return
 
-def range_mid():
-    arr = np.zeros((50, 50, 50))
-    arr[25][25][25] = 5
-    arr[26][26][26] = -5
-    assert np.ptp(arr) == 10
-    return
-
 def variance_mid():
     arr = np.zeros((50, 50, 50))
     arr[25][25][25] = 0
