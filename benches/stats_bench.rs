@@ -5,7 +5,6 @@ use test::Bencher;
 #[macro_use]
 extern crate ndarray;
 extern crate num_ru;
-extern crate ndarray_parallel;
 
 use ndarray::*;
 use num_ru::stats::order_stats::*;
@@ -67,7 +66,7 @@ fn arr_min_mid(b: &mut Bencher) {
 #[bench]
 fn arr_min_large(b: &mut Bencher) {
     b.iter(|| {
-        let mut big_arr = Array::zeros((100, 100, 100, 100));
+        let mut big_arr = Array::zeros((50, 50, 50, 50));
         big_arr[[25, 25, 25, 25]] = -1;
         assert_eq!(amin(&big_arr), -1);
     });
