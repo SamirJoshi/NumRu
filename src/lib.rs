@@ -1,3 +1,5 @@
+#![doc(html_root_url = "https://samirjoshi.github.io/NumRu/")]
+
 #[macro_use]
 extern crate ndarray;
 extern crate num_traits;

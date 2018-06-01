@@ -1,5 +1,5 @@
 # NumRu
-[![](https://travis-ci.com/SamirJoshi/NumRu.svg?branch=master)](https://travis-ci.com/SamirJoshi/NumRu)
+[![](https://travis-ci.org/SamirJoshi/NumRu.svg?branch=master)](https://travis-ci.org/SamirJoshi/NumRu)
 
 
 ## Native Rust Implementation of NumPy Functions
