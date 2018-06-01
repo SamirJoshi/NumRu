@@ -5,7 +5,7 @@
 
 use ndarray::*;
 use num_traits::identities::Zero;
-use std::{cmp::{max, min},
+use std::{cmp::{max, min, PartialOrd},
           fmt::Debug,
           marker::Copy,
           ops::{Add, Mul}};
@@ -81,9 +81,47 @@ where
 
 /// clip
 /// Clip (limit) the values in an array.
+pub fn clip<A, D>(arr: &Array<A, D>, min: A, max: A) -> Array<A, D>
+where
+    A: Debug + Copy + PartialOrd,
+    D: Dimension,
+{
+    // error chain stuff here to check valid inputs
+
+    // perform clipping
+    // candidate for parallelization?
+    arr.mapv(|x| {
+        if x < min {
+            min
+        } else if x > max {
+            max
+        } else {
+            x
+        }
+    })
+}
 
 /// sqrt
 /// Return the positive square-root of an array, element-wise.
+pub trait Sqrt<A, D>
+where
+    D: Dimension,
+{
+    fn sqrt(&self) -> Array<A, D>;
+}
+
+macro_rules! impl_Sqrt {
+    (for $($t:ty),+) => {
+        $(impl<D: Dimension> Sqrt<$t, D> for Array<$t, D> {
+            fn sqrt(&self) -> Array<$t, D> {
+                self.mapv(|x| x.sqrt())
+            }
+        })*
+    };
+}
+
+impl_Sqrt!{for f32, f64}
+
 
 /// cbrt
 /// Return the cube-root of an array, element-wise.
@@ -127,7 +165,7 @@ where
 
 #[cfg(test)]
 mod miscellaneous_tests {
-    use super::{convolve, ConvolutionMode};
+    use super::{convolve, ConvolutionMode, clip, Sqrt};
 
     #[test]
     fn convolve_test() {
@@ -141,5 +179,23 @@ mod miscellaneous_tests {
 
         let arr5 = array![2.5];
         assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Valid), arr5);
+    }
+
+    #[test]
+    fn clip_test() {
+        let arr1 = array![[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]];
+        let arr2 = array![[3, 3, 3, 4, 5], [6, 7, 8, 8, 8]];
+        assert_eq!(clip(&arr1, 3, 8), arr2);
+
+        let arr3 = array![[-1.0, -2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]];
+        let arr4 = array![[3.0, 3.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 8.0, 8.0]];
+        assert_eq!(clip(&arr3, 3.0, 8.0), arr4);
+    }
+
+    #[test]
+    fn sqrt_test() {
+        let arr1 = array![1.0, 4.0, 9.0, 16.0];
+        let arr2 = array![1.0, 2.0, 3.0, 4.0];
+        assert_eq!(arr2, arr1.sqrt());
     }
 }
