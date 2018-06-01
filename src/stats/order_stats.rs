@@ -1,7 +1,5 @@
 use ndarray::*;
 use std;
-//use std::sync::{Arc, Mutex};
-//use crossbeam;
 use ndarray_parallel::prelude::*;
 use ndarray_parallel::*;
 use num_traits;
@@ -46,6 +44,47 @@ pub fn amin<A, D>(arr: &Array<A, D>) -> A
     (*arr_max).clone()
 }
 
+/// Retrieves the min element from an ndarray ArcArray
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// # extern crate chrono;
+/// use ndarray::*;
+/// use num_ru::stats::order_stats::*;
+/// use chrono::{NaiveDate, NaiveDateTime};
+///
+/// # fn main(){
+/// let arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]].into_shared();
+/// assert_eq!(amin_rayon(&arr), 0);
+/// let dt1: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11);
+/// let dt2: NaiveDateTime = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
+/// let dt3: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(13, 10, 11);
+/// let arr2 = array![dt3, dt1, dt2].into_shared();
+/// assert_eq!(amin_rayon(&arr2), dt1);
+/// # }
+/// ```
+pub fn amin_rayon<A, D>(arr: &ArcArray<A, D>) -> A
+    where D: Dimension,
+      A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy + std::marker::Sync,
+{
+    let min_elem = arr.par_iter()
+        .reduce_with(|a:&A, b: &A| {
+            if a > b {
+                b
+            } else {
+               a
+            }
+        });
+
+    match min_elem {
+        Some(m) => m.clone(),
+        None => panic!("Array of 0 elements")
+    }
+}
+
 /// Retrieves the max element from an ndarray Array
 ///
 /// # Examples
@@ -70,18 +109,11 @@ pub fn amin<A, D>(arr: &Array<A, D>) -> A
 ///
 pub fn amax<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
-          A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy + std::marker::Sync + std::marker::Send,
-{
-    println!("number of elements: {:?}", arr.len());
-//    let num_elem = arr.len();
-    amax_simple(arr)
-}
-
-pub fn amax_simple<A, D>(arr: &Array<A, D>) -> A
-    where D: Dimension,
           A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy,
 {
-    println!("in simple - amax");
+    if arr.len() < 1 {
+        panic!("Array of 0 elements")
+    }
     let mut arr_iter = arr.iter();
     let first_elem = arr_iter.next().unwrap();
     let arr_max = arr_iter.fold(first_elem, |acc: &A, x: &A| {
@@ -95,31 +127,32 @@ pub fn amax_simple<A, D>(arr: &Array<A, D>) -> A
     (*arr_max).clone()
 }
 
-// Consumes the array but is much more efficient
-pub fn amax_simple_rayon<A, D>(arr: Array<A, D>) -> A
+/// Retrieves the max element from an ndarray ArcArray
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// # extern crate chrono;
+/// use ndarray::*;
+/// use num_ru::stats::order_stats::*;
+/// use chrono::{NaiveDate, NaiveDateTime};
+/// # fn main(){
+///     let arr = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]].into_shared();
+///     assert_eq!(amax_rayon(&arr), 7);
+///     let dt1: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11);
+///     let dt2: NaiveDateTime = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
+///     let dt3: NaiveDateTime = NaiveDate::from_ymd(2016, 7, 8).and_hms(13, 10, 11);
+///     let arr2 = array![dt3, dt1, dt2].into_shared();
+///     assert_eq!(amax_rayon(&arr2), dt2);
+/// # }
+/// ```
+///
+pub fn amax_rayon<A, D>(arr: &ArcArray<A, D>) -> A
     where D: Dimension,
-      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync,
+      A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy + std::marker::Sync,
 {
-    let max_elem = arr.par_iter()
-        .reduce_with(|a, b| {
-            if a < b {
-                b
-            } else {
-               a
-            }
-        });
-
-    match max_elem {
-        Some(m) => m.clone(),
-        None => panic!("Array of 0 elements")
-    }
-
-}
-pub fn amax_simple_rayon_ref<A, D>(arr: &RcArray<A, D>) -> A
-    where D: Dimension,
-      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync,
-{
-    println!("in rayon - amax");
     let max_elem = arr.par_iter()
         .reduce_with(|a:&A, b: &A| {
             if a < b {
@@ -129,37 +162,11 @@ pub fn amax_simple_rayon_ref<A, D>(arr: &RcArray<A, D>) -> A
             }
         });
 
-    println!("MAX VALUE: {:?}", max_elem);
     match max_elem {
         Some(m) => m.clone(),
         None => panic!("Array of 0 elements")
     }
-
 }
-
-//pub fn amax_simple_rayon_ref<'a, A, D>(arr: &'a mut Array<A, D>) -> A
-//    where D: Dimension,
-//      A: std::fmt::Debug + std::cmp::Ord +  std::marker::Copy + std::marker::Sync + 'a,
-//          &'a Array<A, D> : NdarrayIntoParallelRefIterator<'a>,
-//{
-//    println!("in rayon - amax");
-//    let max_elem = arr.par_iter()
-//        .reduce_with(|a:&A, b: &A| {
-//            if a < b {
-//                b
-//            } else {
-//               a
-//            }
-//        });
-//
-//    println!("MAX VALUE: {:?}", max_elem);
-//    match max_elem {
-//        Some(m) => m.clone(),
-//        None => panic!("Array of 0 elements")
-//    }
-//
-//}
-
 /// Returns the percentile of an element in an ndarray Array
 /// Defaults to lower if the element between two values
 /// # Examples
@@ -175,7 +182,7 @@ pub fn amax_simple_rayon_ref<A, D>(arr: &RcArray<A, D>) -> A
 /// # }
 /// ```
 ///
-pub fn percentile<A, D>(arr: &Array<A, D>, search_elem: A, interpolation: Option<String>) -> f64
+pub fn percentile<A, D>(arr: &Array<A, D>, search_elem: A, _interpolation: Option<String>) -> f64
     where D: Dimension,
           A: std::fmt::Debug + std::cmp::PartialOrd +  std::marker::Copy,
 {
@@ -191,6 +198,36 @@ pub fn percentile<A, D>(arr: &Array<A, D>, search_elem: A, interpolation: Option
     num_below / num_elem
 }
 
+/// Returns the percentile of an element in an ndarray ArcArray
+/// Defaults to lower if the element between two values
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::stats::order_stats::*;
+/// # fn main(){
+///     let arr3d = array![[[5.0, 6.0], [7.0, 0.3]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
+///     assert_eq!(percentile_rayon(&arr3d, 2.5, None), 0.375);
+/// # }
+/// ```
+///
+pub fn percentile_rayon<A, D>(arr: &ArcArray<A, D>, search_elem: A, _interpolation: Option<String>) -> f64
+    where D: Dimension,
+          A: std::fmt::Debug + std::cmp::PartialOrd +  std::marker::Copy,
+{
+    let num_elem = arr.len() as f64;
+    let num_below = arr.iter().fold(0.0, |acc, x: &A| {
+        if search_elem >= *x {
+            acc + 1.0
+        } else {
+            acc
+        }
+    });
+
+    num_below / num_elem
+}
 
 /// Returns the range of an ndarray Array
 /// For efficiency, this implementation does not use max or min
@@ -220,9 +257,37 @@ pub fn ptp<A, D>(arr: &Array<A, D>) -> A
     max_elem - min_elem
 }
 
+/// Returns the range of an ndarray ArcArray
+/// For efficiency, this implementation does not use max or min
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::stats::order_stats::*;
+/// # fn main(){
+///     let arr = array![1.0, 3.6, 5.9, 2.0, 0.2].into_shared();
+///     assert_eq!(ptp_rayon(&arr), 5.7);
+///     let arr2 = array![[[-5.1, -6.1], [-6.2, 5.8]], [[-1.0, -2.0], [-3.0, -4.0]]].into_shared();
+///     assert_eq!(ptp_rayon(&arr2), 12.0);
+/// # }
+/// ```
+///
+pub fn ptp_rayon<A, D>(arr: &ArcArray<A, D>) -> A
+    where D: Dimension,
+          A: std::fmt::Debug + std::cmp::PartialOrd + std::marker::Copy +
+          num_traits::real::Real + std::ops::Sub +
+          std::marker::Sync + std::marker::Send,
+{
+    let max_elem = amax_rayon(arr);
+    let min_elem = amin_rayon(arr);
+    max_elem - min_elem
+}
+
 #[cfg(test)]
 mod amin_tests {
-    use super::amin;
+    use super::{ amin, amin_rayon };
     use chrono::{NaiveDate, NaiveDateTime};
 
     #[test]
@@ -235,6 +300,18 @@ mod amin_tests {
         assert_eq!(amin(&arr3), 1);
         let arr5 = array![4, 3, -1, 2, 1];
         assert_eq!(amin(&arr5), -1);
+    }
+
+    #[test]
+    fn amin_test_1d_rayon(){
+        let arr = array![5, 3, 5, 2, 1].into_shared();
+        assert_eq!(amin_rayon(&arr), 1);
+        let arr2 = array![8, 8, 8, 8, 8].into_shared();
+        assert_eq!(amin_rayon(&arr2), 8);
+        let arr3 = array![1, 3, 5, 2, 1].into_shared();
+        assert_eq!(amin_rayon(&arr3), 1);
+        let arr5 = array![4, 3, -1, 2, 1].into_shared();
+        assert_eq!(amin_rayon(&arr5), -1);
     }
 
     #[test]
@@ -265,13 +342,13 @@ mod amin_tests {
 
 #[cfg(test)]
 mod amax_tests {
-    use super::{amax, amax_simple_rayon, amax_simple_rayon_ref};
+    use super::{ amax, amax_rayon };
     use ndarray::*;
 
     #[test]
     fn amax_rayon_test_1d(){
-        let arr = array![5, 3, 5, 2, 1];
-        assert_eq!(amax_simple_rayon(arr), 5);
+        let arr2 = array![5, 3, 5, 2, 1].into_shared();
+        assert_eq!(amax_rayon(&arr2), 5);
     }
 
     #[test]

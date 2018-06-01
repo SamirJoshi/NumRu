@@ -12,7 +12,7 @@ def arr_max_mid():
     return
 
 def arr_max_large():
-    arr = np.zeros((100, 100, 100, 100))
+    arr = np.zeros((50, 50, 50, 50))
     arr[25][25][25][25]= 16
     assert np.amax(arr) == 16
     return
@@ -24,7 +24,7 @@ def arr_min_mid():
     return
 
 def arr_min_large():
-    arr = np.zeros((100, 100, 100, 100))
+    arr = np.zeros((50, 50, 50, 50))
     arr[25][25][25][25] = -1
     assert np.amin(arr) == -1
     return
@@ -36,7 +36,7 @@ def mean_mid():
     return
 
 def mean_large():
-    arr = np.zeros((100, 100, 100, 100))
+    arr = np.zeros((50, 50, 50, 50))
     arr[25][25][25][25] = 100000000
     assert np.mean(arr) == 1
     return
