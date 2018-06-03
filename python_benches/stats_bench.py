@@ -37,7 +37,7 @@ def mean_mid():
 
 def mean_large():
     arr = np.zeros((50, 50, 50, 50))
-    arr[25][25][25][25] = 100000000
+    arr[25][25][25][25] = 6250000
     assert np.mean(arr) == 1
     return
 
@@ -64,8 +64,9 @@ def bench_stats():
     bench("arr_min_large")
     bench("mean_mid")
     bench("mean_large")
-    bench("range_mid")
     bench("variance_mid")
 
 if __name__ == "__main__":
+    print "Stats Python NumPy Benchmarks"
     bench_stats()
+    print "\n"
