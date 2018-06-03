@@ -1,7 +1,6 @@
 use ndarray::*;
 use std;
 use ndarray_parallel::prelude::*;
-use ndarray_parallel::*;
 use num_traits;
 
 /// Retrieves the min element from an ndarray Array

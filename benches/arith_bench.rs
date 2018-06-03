@@ -9,7 +9,6 @@ extern crate ndarray_parallel;
 
 use ndarray::*;
 use num_ru::math::arithmetic::*;
-use num_ru::math::miscellaneous::*;
 use num_ru::math::sumproddif::*;
 
 #[bench]

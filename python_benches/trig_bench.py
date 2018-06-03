@@ -8,9 +8,9 @@ def sin_bench_mid():
     assert np.array_equal(np.sin(input_arr), expected_arr)
     return
 
-def cos_bench_mid():
-    input_arr = np.full((50, 50, 50), 0.0)
-    expected_arr = np.full((50, 50, 50), 1.0)
+def cos_bench_large():
+    input_arr = np.full((50, 50, 50, 10), 0.0)
+    expected_arr = np.full((50, 50, 50, 10), 1.0)
     assert np.array_equal(np.cos(input_arr), expected_arr)
     return
 
@@ -31,7 +31,7 @@ def bench(function_name):
 
 def bench_trig():
     bench("sin_bench_mid")
-    bench("cos_bench_mid")
+    bench("cos_bench_large")
     bench("arctan_bench_mid")
 
 if __name__ == "__main__":
