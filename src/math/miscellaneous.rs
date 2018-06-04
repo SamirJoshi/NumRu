@@ -132,26 +132,11 @@ impl_Sqrt!{for f32, f64}
 /// absolute
 /// Calculate the absolute value element-wise.
 
-/// fabs
-/// Compute the absolute values element-wise.
-
 /// sign
 /// Returns an element-wise indication of the sign of a number.
 
 /// heaviside
 /// Compute the Heaviside step function.
-
-/// maximum
-/// Element-wise maximum of array elements.
-
-/// minimum
-/// Element-wise minimum of array elements.
-
-/// fmax
-/// Element-wise maximum of array elements.
-
-/// fmin
-/// Element-wise minimum of array elements.
 
 /// nan_to_num
 /// Replace nan with zero and inf with large finite numbers.

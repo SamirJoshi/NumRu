@@ -4,7 +4,9 @@
 //! add, multiply, divide and subtract already handled by ndarray lib
 
 use ndarray::*;
+use ndarray_parallel::prelude::*;
 use num_traits;
+use std;
 use std::{fmt::Debug, marker::Copy, ops::Mul};
 
 
@@ -30,8 +32,23 @@ macro_rules! impl_Reciprocal {
 
 impl_Reciprocal!{for usize, u32, u64, i32, i64, f32, f64}
 
-/// positive
-/// Numerical positive, element-wise.
+/// Returns the numerical positive, element-wise of an ndarray Array
+///
+/// Same as absolute value
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
+///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
+///     assert_eq!(positive(&arr), expected_arr);
+/// # }
+/// ```
 pub fn positive<A, D>(arr: &Array<A, D>) -> Array<A, D>
 where
     D: Dimension,
@@ -40,14 +57,133 @@ where
     arr.mapv(|x| x.abs())
 }
 
-/// negative
-/// Numerical positive, element-wise.
+/// Returns the numerical positive, element-wise of an ndarray ArcArray
+///
+/// Same as absolute_rayon
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
+///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
+///     assert_eq!(positive_rayon(&arr), expected_arr);
+/// # }
+/// ```
+pub fn positive_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
+where
+    D: Dimension,
+    A: Debug + Copy + num_traits::sign::Signed + std::marker::Sync + std::marker::Send,
+{
+    let mut pos_arr = arr.clone();
+    Zip::from(&mut pos_arr).and(arr).par_apply(|pos_arr, &arr| {
+        *pos_arr = arr.abs();
+    });
+    pos_arr
+}
+
+/// Returns the absolute value, element-wise of an ndarray Array
+///
+/// Same as positive
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
+///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
+///     assert_eq!(absolute(&arr), expected_arr);
+/// # }
+/// ```
+pub fn absolute<A, D>(arr: &Array<A, D>) -> Array<A, D>
+where
+    D: Dimension,
+    A: Debug + Copy + num_traits::sign::Signed,
+{
+    positive(arr)
+}
+
+/// Returns the absolute value, element-wise of an ndarray ArcArray
+///
+/// Same as positive_rayon
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
+///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
+///     assert_eq!(absolute_rayon(&arr), expected_arr);
+/// # }
+/// ```
+pub fn absolute_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
+where
+    D: Dimension,
+    A: Debug + Copy + num_traits::sign::Signed + std::marker::Sync + std::marker::Send,
+{
+    positive_rayon(arr)
+}
+
+/// Returns the negative, element-wise of an ndarray Array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
+///     let expected_arr = array![[[5.0, -6.0], [-7.0, 1.0]], [[-1.0, 2.0], [3.0, 4.0]]];
+///     assert_eq!(negative(&arr), expected_arr);
+/// # }
+/// ```
 pub fn negative<A, D>(arr: &Array<A, D>) -> Array<A, D>
 where
     D: Dimension,
     A: Debug + Copy + num_traits::sign::Signed + Mul,
 {
-    arr.mapv(|x| x.abs().neg())
+    arr.mapv(|x| x.neg())
+}
+
+/// Returns the negative, element-wise of an ndarray ArcArray
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
+///     let expected_arr = array![[[5.0, -6.0], [-7.0, 1.0]], [[-1.0, 2.0], [3.0, 4.0]]].into_shared();
+///     assert_eq!(negative_rayon(&arr), expected_arr);
+/// # }
+/// ```
+pub fn negative_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
+where
+    D: Dimension,
+    A: Debug + Copy + num_traits::sign::Signed + Mul + std::marker::Sync + std::marker::Send,
+{
+    let mut neg_arr = arr.clone();
+    Zip::from(&mut neg_arr).and(arr).par_apply(|neg_arr, &arr| {
+        *neg_arr = arr.neg();
+    });
+    neg_arr
 }
 
 /// power
@@ -125,7 +261,7 @@ mod arithmetic_tests {
     #[test]
     fn negative_test() {
         let input_arr = array![1.0, 0.0, -1.0];
-        let expected_arr = array![-1.0, 0.0, -1.0];
+        let expected_arr = array![-1.0, 0.0, 1.0];
         assert_eq!(negative(&input_arr), expected_arr);
 
         // TODO: test limits

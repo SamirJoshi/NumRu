@@ -3,6 +3,21 @@ use ndarray_parallel::prelude::*;
 use num_traits;
 use std;
 
+/// Returns the product of an ndarray Array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::sumproddif::*;
+/// # fn main(){
+///     let arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
+///     assert_eq!(prod(&arr), 5040.0);
+/// # }
+/// ```
+///
 pub fn prod<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
@@ -10,6 +25,22 @@ pub fn prod<A, D>(arr: &Array<A, D>) -> A
     arr.iter().fold(num_traits::one(), |acc, x| acc * *x)
 }
 
+
+/// Returns the sum across an ndarray Array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::sumproddif::*;
+/// # fn main(){
+///     let arr = array![[[5.0, 6.0], [7.0, 0.0]], [[1.0, 2.0], [3.0, 4.0]]];
+///     assert_eq!(sum(&arr), 28.0);
+/// # }
+/// ```
+///
 pub fn sum<A, D>(arr: &Array<A, D>) -> A
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
