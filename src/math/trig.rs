@@ -17,16 +17,16 @@ use num_traits;
 /// # fn main(){
 /// let pi = std::f64::consts::PI;
 /// let input_arr = array![pi, pi / 2.0, 0.004];
-/// let res_arr = sin(&input_arr);
+/// let res_arr = sin(&input_arr).unwrap();
 /// # }
 /// ```
-pub fn sin<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn sin<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
     //TODO: change to actually handle the error
     let sin_arr = Array::from_iter(arr.iter().map(|x| x.sin()));
-    sin_arr.into_shape(arr.raw_dim()).unwrap()
+    sin_arr.into_shape(arr.raw_dim())
 }
 
 /// Computes element-wise sine on an ndarray ArcArray
@@ -45,6 +45,7 @@ pub fn sin<A, D>(arr: &Array<A, D>) -> Array<A, D>
 /// let res_arr = sin_rayon(&input_arr);
 /// # }
 /// ```
+//TODO: Handle Unwrap
 pub fn sin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
@@ -70,16 +71,16 @@ pub fn sin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
 /// # fn main(){
 /// let pi = std::f64::consts::PI;
 /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
-/// let res_arr = cos(&input_arr);
+/// let res_arr = cos(&input_arr).unwrap();
 /// # }
 /// ```
-pub fn cos<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn cos<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>, ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
     //TODO: change to actually handle the error
     let res_arr = Array::from_iter(arr.iter().map(|x| x.cos()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
+    res_arr.into_shape(arr.raw_dim())
 }
 
 /// Computes element-wise cosine on an ndarray ArcArray
@@ -98,6 +99,7 @@ pub fn cos<A, D>(arr: &Array<A, D>) -> Array<A, D>
 /// let res_arr = cos_rayon(&input_arr);
 /// # }
 /// ```
+//TODO: Handle Unwrap
 pub fn cos_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
@@ -123,10 +125,10 @@ pub fn cos_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
 /// # fn main(){
 /// let pi = std::f64::consts::PI;
 /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
-/// let res_arr = tan(&input_arr);
+/// let res_arr = tan(&input_arr).unwrap();
 /// # }
 /// ```
-pub fn tan<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn tan<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
@@ -134,7 +136,7 @@ pub fn tan<A, D>(arr: &Array<A, D>) -> Array<A, D>
     let res_arr = Array::from_iter(arr.iter().map(|x| {
         x.tan()
     }));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
+    res_arr.into_shape(arr.raw_dim())
 }
 
 /// Computes element-wise tangent on an ndarray ArcArray
@@ -183,13 +185,13 @@ pub fn tan_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
 /// assert_eq!(input_arr, sin_rayon(&res_arr));
 /// # }
 /// ```
-pub fn arcsin<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn arcsin<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
     //TODO: change to actually handle the error
     let res_arr = Array::from_iter(arr.iter().map(|x| x.asin()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
+    res_arr.into_shape(arr.raw_dim())
 }
 
 
@@ -242,18 +244,18 @@ pub fn arcsin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
 /// let three: f64 = 3.0;
 /// let input_arr = array![0.0, two.sqrt() / 2.0, 0.5, three.sqrt() / 2.0, 1.0];
 /// let expect_arr = array![pi / 2.0, pi / 4.0, pi / 3.0, pi / 6.0, 0.0];
-/// let res_arr = arccos(&input_arr);
+/// let res_arr = arccos(&input_arr).unwrap();
 /// assert!(compare_arrays(&expect_arr, &res_arr));
-/// assert!(compare_arrays(&input_arr, &cos(&res_arr)));
+/// assert!(compare_arrays(&input_arr, &cos(&res_arr).unwrap()));
 /// # }
 /// ```
-pub fn arccos<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn arccos<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
     //TODO: change to actually handle the error
     let res_arr = Array::from_iter(arr.iter().map(|x| x.acos()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
+    res_arr.into_shape(arr.raw_dim())
 }
 
 /// Computes element-wise inverse cosine on an ndarray ArcArray
@@ -305,17 +307,17 @@ pub fn arccos_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
 /// let three: f64 = 3.0;
 /// let input_arr = array![[0.0, 1.0], [three.sqrt(), three.sqrt() / 3.0]];
 /// let expect_arr = array![[0.0, pi / 4.0], [pi / 3.0, pi / 6.0]];
-/// let res_arr = arctan(&input_arr);
+/// let res_arr = arctan(&input_arr).unwrap();
 /// assert!(compare_arrays(&expect_arr, &res_arr));
 /// # }
 /// ```
-pub fn arctan<A, D>(arr: &Array<A, D>) -> Array<A, D>
+pub fn arctan<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
     //TODO: change to actually handle the error
     let res_arr = Array::from_iter(arr.iter().map(|x| x.atan()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
+    res_arr.into_shape(arr.raw_dim())
 }
 
 /// Computes element-wise inverse tangent on an ndarray ArcArray
@@ -350,28 +352,28 @@ pub fn arctan_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
     res_arr
 }
 
-/// Convert from radians to degrees 
-pub fn deg2rad<D>(arr: &Array<f64, D>) -> Array<f64, D>
+/// Convert from radians to degrees
+pub fn deg2rad<D>(arr: &Array<f64, D>) -> Result<Array<f64, D>,ShapeError>
     where D: Dimension,
 {
-    //TODO: change to actually handle the error 
+    //TODO: change to actually handle the error
     //TODO: implement for a generic type
     let conv_factor: f64 = 180.0 / std::f64::consts::PI;
 
     let res_arr = arr.clone();
     let res_arr_2 = &res_arr * conv_factor;
-    res_arr_2.into_shape(arr.raw_dim()).unwrap()
+    res_arr_2.into_shape(arr.raw_dim())
 }
 
-/// Convert from degrees to radians 
-pub fn rad2deg<D>(arr: &Array<f64, D>) -> Array<f64, D>
+/// Convert from degrees to radians
+pub fn rad2deg<D>(arr: &Array<f64, D>) -> Result<Array<f64, D>,ShapeError>
     where D: Dimension,
 {
     let conv_factor: f64 = std::f64::consts::PI / 180.0;
 
     let res_arr = arr.clone();
     let res_arr_2 = &res_arr * conv_factor;
-    res_arr_2.into_shape(arr.raw_dim()).unwrap()
+    res_arr_2.into_shape(arr.raw_dim())
 }
 
 pub fn compare_arc_arrays<D>(expected_arr: &ArcArray<f64, D>, res_arr: &ArcArray<f64, D>) -> bool
@@ -444,7 +446,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![pi, pi / 2.0];
         let expected_arr = array![0.0, 1.0];
-        let res_arr = sin(&input_arr);
+        let res_arr = sin(&input_arr).unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
 
     }
@@ -463,7 +465,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![pi, pi / 2.0, 0.0];
         let expected_arr = array![-1.0, 0.0, 1.0];
-        let res_arr = cos(&input_arr);
+        let res_arr = cos(&input_arr).unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 
@@ -481,7 +483,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi];
         let expected_arr = array![0.0, 1.0, TAN_INF, 0.0];
-        let res_arr = tan(&input_arr);
+        let res_arr = tan(&input_arr).unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 

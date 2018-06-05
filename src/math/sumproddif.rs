@@ -48,7 +48,24 @@ pub fn sum<A, D>(arr: &Array<A, D>) -> A
     arr.iter().fold(A::zero(), |acc, x| acc + *x)
 }
 
-pub fn cumsum<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
+/// Returns the array that cumulatively sums across ndarray Array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::test::*;
+/// use num_ru::math::sumproddif::*;
+/// # fn main(){
+///     let arr = array![[[5.0, 6.0], [7.0, 0.0]], [[1.0, 2.0], [3.0, 4.0]]];
+///     let res_arr = array![5.0, 11.0, 18.0, 18.0, 19.0, 21.0, 24.0, 28.0];
+///     assert!(compare_arrays(&cumsum(&arr).unwrap(),&res_arr));
+/// # }
+/// ```
+///
+pub fn cumsum<A, D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
   where D: Dimension,
     A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real + std::ops::Add,
     {
@@ -58,11 +75,27 @@ pub fn cumsum<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
             let padd = p[p.len()-1]+ *flat[p.len()];
             p.push(padd);
         }
-        let x = Array::from_iter(p.into_iter()).into_shape(flat.len()).unwrap();
-        x
+        Array::from_iter(p.into_iter()).into_shape(flat.len())
     }
 
-pub fn cumprod<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
+/// Returns the array that cumulatively multiplies across ndarray Array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::test::*;
+/// use num_ru::math::sumproddif::*;
+/// # fn main(){
+///     let arr = array![[[5.0, 6.0], [7.0, 0.0]], [[1.0, 2.0], [3.0, 4.0]]];
+///     let res_arr = array![5.0, 30.0, 210.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+///     assert!(compare_arrays(&cumprod(&arr).unwrap(),&res_arr));
+/// # }
+/// ```
+///
+pub fn cumprod<A, D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
   where D: Dimension,
     A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real + std::ops::Add,
     {
@@ -72,7 +105,7 @@ pub fn cumprod<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
             let padd = p[p.len()-1]* *flat[p.len()];
             p.push(padd);
         }
-        let x = Array::from_iter(p.into_iter()).into_shape(flat.len()).unwrap();
+        let x = Array::from_iter(p.into_iter()).into_shape(flat.len());
         x
     }
 
@@ -139,6 +172,7 @@ mod sumproddif_tests {
     use ndarray::*;
     use num_traits;
     use std;
+    use test::*;
 
     #[test]
     fn prod_test() {
@@ -166,11 +200,9 @@ mod sumproddif_tests {
                                [4.0,5.0,6.0]];
         let res_arr = array![ 1.0,  3.0,  6.0, 10.0, 15.0, 21.0];
 
-        assert!(compare_arrays(&res_arr, &cumsum(&input_arr)));
+        assert!(compare_arrays(&res_arr, &cumsum(&input_arr).unwrap()));
     }
-
-
-
+    
     // fn cumsum_test_axis_0() {
     //     let input_arr = array![[1,2,3],[4,5,6]];
     //     let res_arr = array![[1,2,3],[5,7,9]];
@@ -212,26 +244,6 @@ mod sumproddif_tests {
                                [4.0,5.0,6.0]];
         let res_arr = array![  1.,   2.,   6.,  24., 120., 720.];
 
-        assert!(compare_arrays(&res_arr, &cumprod(&input_arr)));
-    }
-
-
-
-
-    //TODO: put this in one spot
-    fn compare_arrays<D>(expected_arr: &Array<f64, D>, res_arr: &Array<f64, D>) -> bool
-        where D: Dimension,
-    {
-        let mut expected_iter = expected_arr.iter();
-        let mut res_iter = res_arr.iter();
-
-        while let Some(r) = res_iter.next() {
-            let exp = expected_iter.next().unwrap();
-            println!("Expected: {}, Res: {}", *exp, *r);
-            if (*r - *exp).abs() > 1e-10 {
-                return false;
-            }
-        }
-        true
+        assert!(compare_arrays(&res_arr, &cumprod(&input_arr).unwrap()));
     }
 }
