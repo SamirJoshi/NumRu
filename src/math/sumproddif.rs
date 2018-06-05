@@ -61,21 +61,23 @@ pub fn sum<A, D>(arr: &Array<A, D>) -> A
 /// # fn main(){
 ///     let arr = array![[[5.0, 6.0], [7.0, 0.0]], [[1.0, 2.0], [3.0, 4.0]]];
 ///     let res_arr = array![5.0, 11.0, 18.0, 18.0, 19.0, 21.0, 24.0, 28.0];
-///     assert!(compare_arrays(&cumsum(&arr).unwrap(),&res_arr));
+///     assert!(compare_arrays(&cumsum(&arr),&res_arr));
 /// # }
 /// ```
 ///
-pub fn cumsum<A, D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
+pub fn cumsum<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize; 1]>>
   where D: Dimension,
-    A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real + std::ops::Add,
+    A: std::fmt::Debug + std::marker::Copy + std::ops::Add<Output = A> + std::ops::Add,
     {
-        let flat = Array::from_iter(arr.into_iter()).to_vec();
-        let mut p = vec![*flat[0]];
-        for i in 0..flat.len()-1 {
-            let padd = p[p.len()-1]+ *flat[p.len()];
-            p.push(padd);
+        let mut flat = arr.iter();
+        let mut prev = *flat.next().unwrap();
+        let mut p = vec![];
+        p.push(prev);
+        while let Some(a) = flat.next() {
+            p.push(*a+prev);
+            prev = *a + prev;
         }
-        Array::from_iter(p.into_iter()).into_shape(flat.len())
+        Array::from_vec(p)
     }
 
 /// Returns the array that cumulatively multiplies across ndarray Array
@@ -108,6 +110,40 @@ pub fn cumprod<A, D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,Shape
         let x = Array::from_iter(p.into_iter()).into_shape(flat.len());
         x
     }
+
+/// Returns a 1d array of the difference between each consecutive
+/// element in the array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::sumproddif::*;
+/// use num_ru::test::*;
+/// # fn main(){
+///     let arr = array![ 1.2 , 42.  ,  1.9 ,  3.56,  0.54,  9.4 ,  2.  ];
+///     let res_arr = array![ 40.8 , -40.1 ,   1.66,  -3.02,   8.86,  -7.4 ];
+///     assert!(compare_arrays(&ediff1d(&arr).unwrap(),&res_arr));
+/// # }
+/// ```
+///
+pub fn ediff1d<A,D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
+    where D: Dimension,
+          A: std::fmt::Debug + std::marker::Copy +
+          num_traits::real::Real + std::ops::Add,
+{
+    let flat = Array::from_iter(arr.into_iter()).to_vec();
+    let mut p = vec![*flat[1]-*flat[0]];
+    for i in 0..flat.len()-2 {
+        let padd = *flat[p.len()+1]-*flat[p.len()];
+        p.push(padd);
+    }
+    let x = Array::from_iter(p.into_iter()).into_shape(flat.len()-1);
+    x
+
+}
 
 
 /// Returns the product of an ndarray ArcArray
@@ -165,39 +201,7 @@ pub fn sum_rayon<A, D>(arr: &ArcArray<A, D>) -> A
     }
 }
 
-/// Returns a 1d array of the difference between each consecutive
-/// element in the array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::sumproddif::*;
-/// use num_ru::test::*;
-/// # fn main(){
-///     let arr = array![ 1.2 , 42.  ,  1.9 ,  3.56,  0.54,  9.4 ,  2.  ];
-///     let res_arr = array![ 40.8 , -40.1 ,   1.66,  -3.02,   8.86,  -7.4 ];
-///     assert!(compare_arrays(&ediff1d(&arr).unwrap(),&res_arr));
-/// # }
-/// ```
-///
-pub fn ediff1d<A,D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
-    where D: Dimension,
-          A: std::fmt::Debug + std::marker::Copy +
-          num_traits::real::Real + std::ops::Add,
-{
-    let flat = Array::from_iter(arr.into_iter()).to_vec();
-    let mut p = vec![*flat[1]-*flat[0]];
-    for i in 0..flat.len()-2 {
-        let padd = *flat[p.len()+1]-*flat[p.len()];
-        p.push(padd);
-    }
-    let x = Array::from_iter(p.into_iter()).into_shape(flat.len()-1);
-    x
 
-}
 
 
 #[cfg(test)]
@@ -233,8 +237,17 @@ mod sumproddif_tests {
         let input_arr = array![[1.0,2.0,3.0],
                                [4.0,5.0,6.0]];
         let res_arr = array![ 1.0,  3.0,  6.0, 10.0, 15.0, 21.0];
+        // println!("res_arr {:?}", )
 
-        assert!(compare_arrays(&res_arr, &cumsum(&input_arr).unwrap()));
+        assert!(compare_arrays(&res_arr, &cumsum(&input_arr)));
+    }
+
+    #[test]
+    fn cumsum_test_integers() {
+        let input_arr = array![[1,2,3],[4,5,6]];
+        let res_arr = array![1,3,6,10,15,21];
+
+        assert_eq!(res_arr, cumsum(&input_arr));
     }
 
     #[test]
