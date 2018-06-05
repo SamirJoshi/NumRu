@@ -103,7 +103,7 @@ pub fn cumprod<A, D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,Shape
     {
         let flat = Array::from_iter(arr.into_iter()).to_vec();
         let mut p = vec![*flat[0]];
-        for i in 0..flat.len()-1 {
+        for _i in 0..flat.len()-1 {
             let padd = p[p.len()-1]* *flat[p.len()];
             p.push(padd);
         }
@@ -136,7 +136,7 @@ pub fn ediff1d<A,D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeE
 {
     let flat = Array::from_iter(arr.into_iter()).to_vec();
     let mut p = vec![*flat[1]-*flat[0]];
-    for i in 0..flat.len()-2 {
+    for _i in 0..flat.len()-2 {
         let padd = *flat[p.len()+1]-*flat[p.len()];
         p.push(padd);
     }

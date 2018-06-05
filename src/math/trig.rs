@@ -1,3 +1,6 @@
+//! Trigonometric Math Module
+//! Computes standard trig functions element wise
+
 use std;
 use ndarray::*;
 use ndarray_parallel::prelude::*;
@@ -44,7 +47,6 @@ pub fn sin<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
 /// let res_arr = sin_rayon(&input_arr);
 /// # }
 /// ```
-//TODO: Handle Unwrap
 pub fn sin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +

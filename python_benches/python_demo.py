@@ -1,5 +1,4 @@
 import numpy as np
-import time
 
 def runner():
     for i in range(0, 5):
