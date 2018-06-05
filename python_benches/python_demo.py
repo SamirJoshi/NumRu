@@ -1,17 +1,14 @@
 import numpy as np
+import time
 
 def runner():
-    for i in range(0, 10):
-        datetimes_example()
+    for i in range(0, 5):
+        stats_example()
         math_example()
     return 0
 
-def datetimes_example():
-    return 0
-
-def math_example():
-    arr = np.random.rand(1000000, 50)
-
+def stats_example():
+    arr = np.random.rand(100000, 50)
     # basic statistics
     min_elem = np.amin(arr)
     max_elem = np.amax(arr)
@@ -29,9 +26,11 @@ def math_example():
     print ("Standard Deviation: ", arr_std)
     print ("Sum: ", arr_sum)
     print ("Product: ", arr_prod)
+    return
 
+def math_example():
     #math
-    math_arr = np.random.rand(1000000, 50) - 0.5
+    math_arr = np.random.rand(100000, 50) - 0.5
     math_arr_neg = np.negative(math_arr)
     math_arr = np.positive(math_arr)
 

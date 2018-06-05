@@ -52,7 +52,9 @@ pub fn sin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
         std::marker::Sync + std::marker::Send,
 {
     let mut sin_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut sin_arr).and(arr).par_apply(|sin_arr, &arr| {
+    Zip::from(&mut sin_arr)
+        .and(arr)
+        .par_apply(|sin_arr, &arr| {
         *sin_arr = arr.sin();
     });
     sin_arr

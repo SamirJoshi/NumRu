@@ -13,17 +13,11 @@ use num_ru::math::arithmetic::*;
 use ndarray_rand::RandomExt;
 use rand::distributions::Range;
 
-
 pub fn main() {
     for _i in 0..5 {
-        datetimes_example();
         stats_example();
         math_example();
     }
-}
-
-pub fn datetimes_example() {
-    // max and min of datetimes
 }
 
 pub fn stats_example() {
@@ -48,7 +42,6 @@ pub fn stats_example() {
     println!("Standard Deviation: {}", arr_std);
     println!("Sum: {}", arr_sum);
     println!("Product: {}", arr_prod);
-
     println!("\n");
 }
 
