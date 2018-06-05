@@ -9,8 +9,6 @@ use num_traits;
 use std;
 use std::{fmt::Debug, marker::Copy, ops::Mul};
 
-
-/// reciprocal
 /// Return the reciprocal of the argument, element-wise.
 /// Calculates 1/x.
 pub trait Reciprocal<T, D>
@@ -186,15 +184,36 @@ where
     neg_arr
 }
 
-/// power
 /// First array elements raised to powers from second array, element-wise.
-// fn power<A, D>(arr: &Array<A, D>, exp: usize) -> Array<A, D>
-// where
-//     D: Dimension,
-//     A: Debug + Copy,
-// {
+pub trait Power<A, B, D>
+where
+    D: Dimension,
+{
+    fn power(&self, arr_pow: &Array<B, D>) -> Array<A, D>;
+}
 
-// }
+macro_rules! impl_Power {
+    (for $($t:ty, $t2:ty, $pow:ident),+) => {
+        $(
+            impl<D: Dimension> Power<$t, $t2, D> for Array<$t, D> {
+                fn power(&self, arr_pow: &Array<$t2, D>) -> Array<$t, D> {
+                    let mut res = Array::from_elem(self.dim(), 0 as $t);
+                    Zip::from(&mut res)
+                        .and(self)
+                        .and(arr_pow)
+                        .apply(|x, &y, &z| {
+                            *x = y.$pow(z);
+                        });
+                    res
+                }
+            }
+        )*
+    };
+}
+
+impl_Power!{ for usize, u32, pow, u8, u32, pow, u16, u32, pow, u32, u32, pow, u64, u32, pow, u128, u32, pow }
+impl_Power!{ for isize, u32, pow, i8, u32, pow, i16, u32, pow, i32, u32, pow, i64, u32, pow, i128, u32, pow }
+impl_Power!{ for f32, f32, powf, f64, f64, powf }
 
 /// floor_divide
 /// Return the largest integer smaller or equal to the division of the inputs.
@@ -212,7 +231,6 @@ where
 /// modf
 /// Return the fractional and integral parts of an array, element-wise.
 
-/// remainder
 /// Return element-wise remainder of division.
 pub trait Remainder<T, D>
 where
@@ -246,7 +264,7 @@ impl_Remainder!{for usize, u32, u64, i32, i64, f32, f64}
 
 #[cfg(test)]
 mod arithmetic_tests {
-    use super::{negative, positive, Reciprocal, Remainder};
+    use super::{negative, positive, Power, Reciprocal, Remainder};
 
     #[test]
     fn positive_test() {
@@ -285,5 +303,13 @@ mod arithmetic_tests {
         let arr2 = array![3.0, 4.0, 5.0];
         let arr3 = array![1.0, 3.0, 2.0];
         assert_eq!(arr1.remainder(&arr2), arr3);
+    }
+
+    #[test]
+    fn power_test() {
+        let arr1 = array![2.0, 3.0, 4.0];
+        let arr2 = array![-1.0, 2.0, 2.5];
+        let arr3 = array![0.5, 9.0, 32.0];
+        assert_eq!(arr1.power(&arr2), arr3);
     }
 }
