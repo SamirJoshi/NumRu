@@ -24,7 +24,6 @@ pub fn sin<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
 {
-    //TODO: change to actually handle the error
     let sin_arr = Array::from_iter(arr.iter().map(|x| x.sin()));
     sin_arr.into_shape(arr.raw_dim())
 }
