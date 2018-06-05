@@ -175,6 +175,34 @@ impl_Square!{ for f32, f32, powf, f64, f64, powf }
 
 /// sign
 /// Returns an element-wise indication of the sign of a number.
+pub trait Sign<A, D>
+where
+    D: Dimension,
+{
+    fn sign(&self) -> Array<A, D>;
+}
+
+macro_rules! impl_Sign {
+    (for $($t:ty),+) => {
+        $(
+            impl<D: Dimension> Sign<$t, D> for Array<$t, D> {
+                fn sign(&self) -> Array<$t, D> {
+                    self.mapv(|x| {
+                        if x == (0 as $t) {
+                            0 as $t
+                        } else if x > (0 as $t) {
+                            1 as $t
+                        } else {
+                            -1 as $t
+                        }
+                    })
+                }
+            }
+        )*
+    };
+}
+
+impl_Sign!{ for isize, i8, i16, i32, i64, i128, f32, f64 }
 
 /// heaviside
 /// Compute the Heaviside step function.
@@ -191,7 +219,7 @@ impl_Square!{ for f32, f32, powf, f64, f64, powf }
 
 #[cfg(test)]
 mod miscellaneous_tests {
-    use super::{clip, convolve, Cbrt, ConvolutionMode, Sqrt, Square};
+    use super::{clip, convolve, Cbrt, ConvolutionMode, Sign, Sqrt, Square};
     use ndarray::*;
 
     #[test]
@@ -242,6 +270,17 @@ mod miscellaneous_tests {
         let arr3 = array![2, 4, 6, 8];
         let arr4 = array![4, 16, 36, 64];
         assert_eq!(arr4, arr3.square());
+    }
+
+    #[test]
+    fn sign_test() {
+        let arr1 = array![-0.0, 4.0, -6.0, 8.0];
+        let arr2 = array![0.0, 1.0, -1.0, 1.0];
+        assert!(arr2.array_comparison(&arr1.sign()));
+
+        let arr3 = array![-0, 4, -6, 8];
+        let arr4 = array![0, 1, -1, 1];
+        assert_eq!(arr4, arr3.sign());
     }
 
     // helper
