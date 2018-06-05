@@ -17,6 +17,35 @@ pub fn sum<A, D>(arr: &Array<A, D>) -> A
     arr.iter().fold(A::zero(), |acc, x| acc + *x)
 }
 
+pub fn cumsum<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
+  where D: Dimension,
+    A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real + std::ops::Add,
+    {
+        let flat = Array::from_iter(arr.into_iter()).to_vec();
+        let mut p = vec![*flat[0]];
+        for i in 0..flat.len()-1 {
+            let padd = p[p.len()-1]+ *flat[p.len()];
+            p.push(padd);
+        }
+        let x = Array::from_iter(p.into_iter()).into_shape(flat.len()).unwrap();
+        x
+    }
+
+pub fn cumprod<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
+  where D: Dimension,
+    A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real + std::ops::Add,
+    {
+        let flat = Array::from_iter(arr.into_iter()).to_vec();
+        let mut p = vec![*flat[0]];
+        for i in 0..flat.len()-1 {
+            let padd = p[p.len()-1]* *flat[p.len()];
+            p.push(padd);
+        }
+        let x = Array::from_iter(p.into_iter()).into_shape(flat.len()).unwrap();
+        x
+    }
+
+
 /// Returns the product of an ndarray ArcArray
 ///
 /// # Examples
@@ -43,6 +72,7 @@ pub fn prod_rayon<A, D>(arr: &ArcArray<A, D>) -> A
         None => panic!("Array of 0 elements")
     }
 }
+
 
 /// Returns the sum across an ndarray ArcArray
 ///
@@ -97,5 +127,80 @@ mod sumproddif_tests {
     #[test]
     fn sum_test_int() {
         assert_eq!(sum(&array![1,2,3,4]),10);
+    }
+
+    #[test]
+    fn cumsum_test_no_axis() {
+        let input_arr = array![[1.0,2.0,3.0],
+                               [4.0,5.0,6.0]];
+        let res_arr = array![ 1.0,  3.0,  6.0, 10.0, 15.0, 21.0];
+
+        assert!(compare_arrays(&res_arr, &cumsum(&input_arr)));
+    }
+
+
+
+    // fn cumsum_test_axis_0() {
+    //     let input_arr = array![[1,2,3],[4,5,6]];
+    //     let res_arr = array![[1,2,3],[5,7,9]];
+    //
+    // }
+
+    // fn cumsum_test_axis_1() {
+    //     let input_arr = array![[1,2,3],[4,5,6]];
+    //     let res_arr = array![[1,3,6],[4,9,15]];
+    // }
+
+    // fn cumsum_test_3d_axis_2() {
+    //     let input_arr = array![[[ 1,  2,  3],
+    //     [ 4,  5,  6]],
+    //    [[ 7,  8,  9],
+    //     [10, 11, 12]]];
+    //
+    //     let res_arr = array![[[ 1,  3,  6],
+    //     [ 4,  9, 15]],
+    //    [[ 7, 15, 24],
+    //     [10, 21, 33]]]
+    // }
+
+    // fn cumsum_test_3d_axis_1() {
+    //     let input_arr = array![[[ 1,  2,  3],
+    //         [ 4,  5,  6]],
+    //        [[ 7,  8,  9],
+    //         [10, 11, 12]]];
+    //
+    //     let res_arr = array![[[ 1,  2,  3],
+    //     [ 5,  7,  9]],
+    //    [[ 7,  8,  9],
+    //     [17, 19, 21]]]
+    // }
+
+    #[test]
+    fn cumprod_test() {
+        let input_arr = array![[1.0,2.0,3.0],
+                               [4.0,5.0,6.0]];
+        let res_arr = array![  1.,   2.,   6.,  24., 120., 720.];
+
+        assert!(compare_arrays(&res_arr, &cumprod(&input_arr)));
+    }
+
+
+
+
+    //TODO: put this in one spot
+    fn compare_arrays<D>(expected_arr: &Array<f64, D>, res_arr: &Array<f64, D>) -> bool
+        where D: Dimension,
+    {
+        let mut expected_iter = expected_arr.iter();
+        let mut res_iter = res_arr.iter();
+
+        while let Some(r) = res_iter.next() {
+            let exp = expected_iter.next().unwrap();
+            println!("Expected: {}, Res: {}", *exp, *r);
+            if (*r - *exp).abs() > 1e-10 {
+                return false;
+            }
+        }
+        true
     }
 }

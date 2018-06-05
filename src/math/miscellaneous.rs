@@ -198,4 +198,5 @@ mod miscellaneous_tests {
         let arr2 = array![1.0, 2.0, 3.0, 4.0];
         assert_eq!(arr2, arr1.sqrt());
     }
+
 }
