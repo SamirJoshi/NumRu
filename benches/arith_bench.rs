@@ -41,6 +41,15 @@ fn sum_bench_mid(b: &mut Bencher) {
 }
 
 #[bench]
+fn sum_bench_large(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = Array::from_elem((50, 50, 50, 50), 1.0);
+        let res = sum(&input_arr);
+        assert_eq!(res, 6250000.0);
+    });
+}
+
+#[bench]
 fn prod_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), 1.0);
@@ -58,25 +67,34 @@ fn prod_bench_large(b: &mut Bencher) {
     });
 }
 
-//#[bench]
-//fn negative_bench_mid_rayon(b: &mut Bencher) {
-//    b.iter(|| {
-//        let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
-//        let expected_arr = ArcArray::from_elem((50, 50, 50), -1.0);
-//        let res_arr = negative(&input_arr);
-//        assert_eq!(expected_arr, res_arr);
-//    });
-//}
-//
-//#[bench]
-//fn negative_bench_large_rayon(b: &mut Bencher) {
-//    b.iter(|| {
-//        let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
-//        let expected_arr = ArcArray::from_elem((50, 50, 50, 50), -1.0);
-//        let res_arr = negative(&input_arr);
-//        assert_eq!(expected_arr, res_arr);
-//    });
-//}
+#[bench]
+fn negative_bench_mid_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
+        let expected_arr = ArcArray::from_elem((50, 50, 50), -1.0);
+        let res_arr = negative_rayon(&input_arr);
+        assert_eq!(expected_arr, res_arr);
+    });
+}
+
+#[bench]
+fn negative_bench_large_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
+        let expected_arr = ArcArray::from_elem((50, 50, 50, 50), -1.0);
+        let res_arr = negative_rayon(&input_arr);
+        assert_eq!(expected_arr, res_arr);
+    });
+}
+
+#[bench]
+fn sum_bench_large_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
+        let res = sum_rayon(&input_arr);
+        assert_eq!(res, 6250000.0);
+    });
+}
 
 #[bench]
 fn sum_bench_mid_rayon(b: &mut Bencher) {

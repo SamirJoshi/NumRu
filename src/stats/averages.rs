@@ -28,6 +28,14 @@ pub fn mean<A, D>(arr: &Array<A, D>) -> A
     arr_sum / num_elem
 }
 
+//pub fn mean_along_axis<A, D>(arr: &Array<A, D>, axis: usize) -> Array<A, D::Smaller>
+//    where D: Dimension + RemoveAxis,
+//          A: std::fmt::Debug + std::marker::Copy +
+//          num_traits::real::Real + std::ops::Add + std::ops::Div,
+//{
+//    arr.mean_axis(Axis(axis))
+//}
+
 /// Retrieves the mean across an ndarray ArcArray
 ///
 /// # Examples

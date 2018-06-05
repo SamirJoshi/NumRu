@@ -43,7 +43,11 @@ def mean_large():
 
 def variance_mid():
     arr = np.zeros((50, 50, 50))
-    arr[25][25][25] = 0
+    assert np.var(arr) == 0
+    return
+
+def variance_large():
+    arr = np.zeros((50, 50, 50, 50))
     assert np.var(arr) == 0
     return
 
@@ -65,6 +69,7 @@ def bench_stats():
     bench("mean_mid")
     bench("mean_large")
     bench("variance_mid")
+    bench("variance_large")
 
 if __name__ == "__main__":
     print "Stats Python NumPy Benchmarks"
