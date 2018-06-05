@@ -125,24 +125,29 @@ pub fn cumprod<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
 /// # fn main(){
 ///     let arr = array![ 1.2 , 42.  ,  1.9 ,  3.56,  0.54,  9.4 ,  2.  ];
 ///     let res_arr = array![ 40.8 , -40.1 ,   1.66,  -3.02,   8.86,  -7.4 ];
-///     assert!(compare_arrays(&ediff1d(&arr).unwrap(),&res_arr));
+///     assert!(compare_arrays(&ediff1d(&arr),&res_arr));
 /// # }
 /// ```
 ///
-pub fn ediff1d<A,D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
+pub fn ediff1d<A,D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
     where D: Dimension,
           A: std::fmt::Debug + std::marker::Copy +
-          num_traits::real::Real + std::ops::Add,
+          std::ops::Sub + std::ops::Sub<Output = A>,
 {
-    let flat = Array::from_iter(arr.into_iter()).to_vec();
-    let mut p = vec![*flat[1]-*flat[0]];
-    for i in 0..flat.len()-2 {
-        let padd = *flat[p.len()+1]-*flat[p.len()];
-        p.push(padd);
-    }
-    let x = Array::from_iter(p.into_iter()).into_shape(flat.len()-1);
-    x
+    let mut flat = arr.iter();
+    let mut p = vec![];
 
+    let first = flat.next();
+    match first {
+        Some(mut prev) => {
+            while let Some(curr) = flat.next() {
+                p.push(*curr - *prev);
+                prev = curr;
+            }
+        },
+        None => (),
+    }
+    Array::from_vec(p)
 }
 
 
@@ -255,7 +260,35 @@ mod sumproddif_tests {
         let input_arr = array![[1., 2., 3.],
                                [4., 5., 6.]];
         let res_arr = array![1., 1., 1., 1., 1.];
-        assert!(compare_arrays(&res_arr, &ediff1d(&input_arr).unwrap()));
+        assert_eq!(res_arr, ediff1d(&input_arr));
+    }
+
+    #[test]
+    fn ediff1d_test_different_difs() {
+        let input_arr = array![1,3,6,10];
+        let res_arr = array![2,3,4];
+        assert_eq!(res_arr, ediff1d(&input_arr));
+    }
+
+    #[test]
+    fn ediff1d_test_empty() {
+        let input_arr: Array<f64,Dim<[usize;1]>> = array![];
+        let res_arr = array![];
+        assert_eq!(res_arr, ediff1d(&input_arr));
+    }
+
+    #[test]
+    fn ediff1d_test_one() {
+        let input_arr = array![1.0];
+        let res_arr = array![];
+        assert_eq!(res_arr, ediff1d(&input_arr));
+    }
+
+    #[test]
+    fn ediff1d_test_two() {
+        let input_arr = array![1.0, 3.0];
+        let res_arr = array![2.0];
+        assert_eq!(res_arr, ediff1d(&input_arr));
     }
 
     // fn cumsum_test_axis_0() {
