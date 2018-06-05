@@ -13,7 +13,3 @@ extern crate error_chain;
 
 pub mod math;
 pub mod stats;
-
-pub fn test_function() {
-    println!("hello");
-}

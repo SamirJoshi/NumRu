@@ -1,35 +1,63 @@
-#[macro_use]
 extern crate ndarray;
+extern crate ndarray_rand;
 extern crate num_ru;
+extern crate rand;
 
 use ndarray::*;
-use num_ru::*;
 use num_ru::stats::order_stats::*;
 use num_ru::stats::averages::*;
 use num_ru::math::trig::*;
+use num_ru::math::sumproddif::*;
+use num_ru::math::arithmetic::*;
+use ndarray_rand::RandomExt;
+use rand::distributions::Range;
+
 
 pub fn main() {
-    test_function();
-    let arr = array![2, 3, 4];
-    let mut arr_2d = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
+    for _i in 0..5 {
+        datetimes_example();
+        stats_example();
+        math_example();
+    }
+}
 
-    let mut big_arr = Array::zeros((5, 6, 7));
-    big_arr[[2, 3, 4]] = 15;
+pub fn datetimes_example() {
+    // max and min of datetimes
+}
 
-    println!("arr: {}", arr);
-    println!("arr: {}", arr[0]);
-    let m = amax(&mut arr_2d);
-    println!("max: {}", m);
-    println!("max: {}", amax(&big_arr));
-//    println!("max: {}", amax_parallelized(&arr_3d));
-    let arr_f = array![2.0, 3.0, 4.0];
-    println!("mean: {}", mean(&arr_f));
+pub fn stats_example() {
+    // create a random dataset
+    let arr = ArcArray::random((100000, 50), Range::new(0., 1.));
+    println!("Created array - beginning stats");
 
-    let pi = std::f64::consts::PI;
-    let input_arr = array![pi, pi / 2.0];
-    let res = num_ru::math::trig::sin(&input_arr);
-    println!("sin res:{}", res);
-    let res = sin(&input_arr);
-    println!("sin res:{}", res);
+    // basic statistics
+    let min_elem = amin_rayon(&arr);
+    let max_elem = amax_rayon(&arr);
+    let range = ptp_rayon(&arr);
+    println!("Minimum element: {}", min_elem);
+    println!("Maximum element: {}", max_elem);
+    println!("Range: {}", range);
 
+    // more statistics
+    let avg = mean_rayon(&arr);
+    let arr_std = std_dev_rayon(&arr);
+    let arr_sum = sum_rayon(&arr);
+    let arr_prod = prod_rayon(&arr);
+    println!("Mean: {}", avg);
+    println!("Standard Deviation: {}", arr_std);
+    println!("Sum: {}", arr_sum);
+    println!("Product: {}", arr_prod);
+
+    println!("\n");
+}
+
+pub fn math_example() {
+    let math_arr = ArcArray::random((100000, 50), Range::new(-0.5, 0.5));
+    let _math_arr_neg = negative_rayon(&math_arr);
+    let _math_arr_pos = positive_rayon(&math_arr);
+
+    let _sin_arr = sin_rayon(&math_arr);
+    let _cos_arr = cos_rayon(&math_arr);
+    let tan_arr = tan_rayon(&math_arr);
+    let _orig_arr = arctan_rayon(&tan_arr);
 }
