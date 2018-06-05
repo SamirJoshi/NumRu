@@ -224,8 +224,6 @@ mod miscellaneous_tests {
         fn array_comparison(&self, arr2: &Array<A, D>) -> bool;
     }
 
-<<<<<<< HEAD
-=======
     macro_rules! impl_ArrayComparisonFloat {
         (for $($t:ty),+) => {
             $(impl<D: Dimension> ArrayComparisonFloat<$t, D> for Array<$t, D> {
@@ -248,5 +246,4 @@ mod miscellaneous_tests {
     }
 
     impl_ArrayComparisonFloat!{for f32, f64}
->>>>>>> 973e946697e4ddf95b25e03ab81ebc8f18a28b52
 }
