@@ -19,7 +19,6 @@ pub enum ConvolutionMode {
     Valid,
 }
 
-/// convolve
 /// Returns the discrete, linear convolution of two one-dimensional sequences.
 pub fn convolve<A>(
     arr1: &Array<A, Dim<[usize; 1]>>,
@@ -86,7 +85,6 @@ where
     out
 }
 
-/// clip
 /// Clip (limit) the values in an array.
 pub fn clip<A, D>(arr: &Array<A, D>, min: A, max: A) -> Array<A, D>
 where
@@ -108,7 +106,6 @@ where
     })
 }
 
-/// sqrt
 /// Return the positive square-root of an array, element-wise.
 pub trait Sqrt<A, D>
 where
@@ -129,7 +126,6 @@ macro_rules! impl_Sqrt {
 
 impl_Sqrt!{for f32, f64}
 
-/// cbrt
 /// Return the cube-root of an array, element-wise.
 pub trait Cbrt<A, D>
 where
@@ -150,14 +146,63 @@ macro_rules! impl_Cbrt {
 
 impl_Cbrt!{for f32, ONE_THIRD_F32, f64, ONE_THIRD_F64}
 
-/// square
 /// Return the element-wise square of the input.
+pub trait Square<A, D>
+where
+    D: Dimension,
+{
+    fn square(&self) -> Array<A, D>;
+}
+
+macro_rules! impl_Square {
+    (for $($t:ty, $t2:ty, $pow:ident),+) => {
+        $(
+            impl<D: Dimension> Square<$t, D> for Array<$t, D> {
+                fn square(&self) -> Array<$t, D> {
+                    self.mapv(|x| x.$pow(2 as $t2))
+                }
+            }
+        )*
+    };
+}
+
+impl_Square!{ for usize, u32, pow, u8, u32, pow, u16, u32, pow, u32, u32, pow, u64, u32, pow, u128, u32, pow }
+impl_Square!{ for isize, u32, pow, i8, u32, pow, i16, u32, pow, i32, u32, pow, i64, u32, pow, i128, u32, pow }
+impl_Square!{ for f32, f32, powf, f64, f64, powf }
 
 /// absolute
 /// Calculate the absolute value element-wise.
 
 /// sign
 /// Returns an element-wise indication of the sign of a number.
+pub trait Sign<A, D>
+where
+    D: Dimension,
+{
+    fn sign(&self) -> Array<A, D>;
+}
+
+macro_rules! impl_Sign {
+    (for $($t:ty),+) => {
+        $(
+            impl<D: Dimension> Sign<$t, D> for Array<$t, D> {
+                fn sign(&self) -> Array<$t, D> {
+                    self.mapv(|x| {
+                        if x == (0 as $t) {
+                            0 as $t
+                        } else if x > (0 as $t) {
+                            1 as $t
+                        } else {
+                            -1 as $t
+                        }
+                    })
+                }
+            }
+        )*
+    };
+}
+
+impl_Sign!{ for isize, i8, i16, i32, i64, i128, f32, f64 }
 
 /// heaviside
 /// Compute the Heaviside step function.
@@ -174,7 +219,7 @@ impl_Cbrt!{for f32, ONE_THIRD_F32, f64, ONE_THIRD_F64}
 
 #[cfg(test)]
 mod miscellaneous_tests {
-    use super::{clip, convolve, Cbrt, ConvolutionMode, Sqrt};
+    use super::{clip, convolve, Cbrt, ConvolutionMode, Sign, Sqrt, Square};
     use ndarray::*;
 
     #[test]
@@ -214,6 +259,28 @@ mod miscellaneous_tests {
         let arr1 = array![1.0, 8.0, 27.0, 64.0];
         let arr2 = array![1.0, 2.0, 3.0, 4.0];
         assert!(arr2.array_comparison(&arr1.cbrt()));
+    }
+
+    #[test]
+    fn square_test() {
+        let arr1 = array![2.0, 4.0, 6.0, 8.0];
+        let arr2 = array![4.0, 16.0, 36.0, 64.0];
+        assert!(arr2.array_comparison(&arr1.square()));
+
+        let arr3 = array![2, 4, 6, 8];
+        let arr4 = array![4, 16, 36, 64];
+        assert_eq!(arr4, arr3.square());
+    }
+
+    #[test]
+    fn sign_test() {
+        let arr1 = array![-0.0, 4.0, -6.0, 8.0];
+        let arr2 = array![0.0, 1.0, -1.0, 1.0];
+        assert!(arr2.array_comparison(&arr1.sign()));
+
+        let arr3 = array![-0, 4, -6, 8];
+        let arr4 = array![0, 1, -1, 1];
+        assert_eq!(arr4, arr3.sign());
     }
 
     // helper

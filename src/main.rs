@@ -1,6 +1,7 @@
 extern crate ndarray;
 extern crate ndarray_rand;
 extern crate num_ru;
+extern crate num_traits;
 extern crate rand;
 
 use ndarray::*;
