@@ -1,11 +1,8 @@
 extern crate ndarray;
 extern crate ndarray_rand;
 extern crate num_ru;
-<<<<<<< HEAD
 extern crate num_traits;
-=======
 extern crate rand;
->>>>>>> 973e946697e4ddf95b25e03ab81ebc8f18a28b52
 
 use ndarray::*;
 use num_ru::stats::order_stats::*;
