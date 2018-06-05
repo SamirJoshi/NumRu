@@ -165,6 +165,40 @@ pub fn sum_rayon<A, D>(arr: &ArcArray<A, D>) -> A
     }
 }
 
+/// Returns a 1d array of the difference between each consecutive
+/// element in the array
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::sumproddif::*;
+/// use num_ru::test::*;
+/// # fn main(){
+///     let arr = array![ 1.2 , 42.  ,  1.9 ,  3.56,  0.54,  9.4 ,  2.  ];
+///     let res_arr = array![ 40.8 , -40.1 ,   1.66,  -3.02,   8.86,  -7.4 ];
+///     assert!(compare_arrays(&ediff1d(&arr).unwrap(),&res_arr));
+/// # }
+/// ```
+///
+pub fn ediff1d<A,D>(arr: &Array<A, D>) -> Result<Array<A, Dim<[usize;1]>>,ShapeError>
+    where D: Dimension,
+          A: std::fmt::Debug + std::marker::Copy +
+          num_traits::real::Real + std::ops::Add,
+{
+    let flat = Array::from_iter(arr.into_iter()).to_vec();
+    let mut p = vec![*flat[1]-*flat[0]];
+    for i in 0..flat.len()-2 {
+        let padd = *flat[p.len()+1]-*flat[p.len()];
+        p.push(padd);
+    }
+    let x = Array::from_iter(p.into_iter()).into_shape(flat.len()-1);
+    x
+
+}
+
 
 #[cfg(test)]
 mod sumproddif_tests {
@@ -202,7 +236,15 @@ mod sumproddif_tests {
 
         assert!(compare_arrays(&res_arr, &cumsum(&input_arr).unwrap()));
     }
-    
+
+    #[test]
+    fn ediff1d_test() {
+        let input_arr = array![[1., 2., 3.],
+                               [4., 5., 6.]];
+        let res_arr = array![1., 1., 1., 1., 1.];
+        assert!(compare_arrays(&res_arr, &ediff1d(&input_arr).unwrap()));
+    }
+
     // fn cumsum_test_axis_0() {
     //     let input_arr = array![[1,2,3],[4,5,6]];
     //     let res_arr = array![[1,2,3],[5,7,9]];
