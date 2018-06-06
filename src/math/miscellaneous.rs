@@ -1,5 +1,4 @@
-//! Miscellaneous module implements Numpy routines listed at
-//! https://docs.scipy.org/doc/numpy/reference/routines.math.html#miscellaneous
+//! Miscellaneous module implements Numpy routines listed [here](https://docs.scipy.org/doc/numpy/reference/routines.math.html#miscellaneous)
 //!
 //!
 
@@ -13,6 +12,8 @@ use std::{cmp::{max, min, PartialOrd},
 const ONE_THIRD_F32: f32 = 1.0 / 3.0;
 const ONE_THIRD_F64: f64 = 1.0 / 3.0;
 
+/// Required by user to pass into convolve method,
+/// determines the type of convolution to calculate
 pub enum ConvolutionMode {
     Full,
     Same,
@@ -20,6 +21,28 @@ pub enum ConvolutionMode {
 }
 
 /// Returns the discrete, linear convolution of two one-dimensional sequences.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::miscellaneous::*;
+///
+/// # fn main(){
+/// let arr1 = array![1.0, 2.0, 3.0];
+/// let arr2 = array![0.0, 1.0, 0.5];
+/// let arr3 = array![0.0, 1.0, 2.5, 4.0, 1.5];
+/// assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Full), arr3);
+///
+/// let arr4 = array![1.0, 2.5, 4.0];
+/// assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Same), arr4);
+///
+/// let arr5 = array![2.5];
+/// assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Valid), arr5);
+/// # }
+/// ```
 pub fn convolve<A>(
     arr1: &Array<A, Dim<[usize; 1]>>,
     arr2: &Array<A, Dim<[usize; 1]>>,
@@ -86,6 +109,25 @@ where
 }
 
 /// Clip (limit) the values in an array.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::miscellaneous::*;
+///
+/// # fn main(){
+/// let arr1 = array![[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]];
+/// let arr2 = array![[3, 3, 3, 4, 5], [6, 7, 8, 8, 8]];
+/// assert_eq!(clip(&arr1, 3, 8), arr2);
+///
+/// let arr3 = array![[-1.0, -2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]];
+/// let arr4 = array![[3.0, 3.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 8.0, 8.0]];
+/// assert_eq!(clip(&arr3, 3.0, 8.0), arr4);
+/// # }
+/// ```
 pub fn clip<A, D>(arr: &Array<A, D>, min: A, max: A) -> Array<A, D>
 where
     A: Debug + Copy + PartialOrd,
@@ -107,6 +149,21 @@ where
 }
 
 /// Return the positive square-root of an array, element-wise.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::miscellaneous::*;
+///
+/// # fn main(){
+/// let arr1 = array![1.0, 4.0, 9.0, 16.0];
+/// let arr2 = array![1.0, 2.0, 3.0, 4.0];
+/// assert!(arr2.array_comparison(&arr1.sqrt()));
+/// # }
+/// ```
 pub trait Sqrt<A, D>
 where
     D: Dimension,
@@ -127,6 +184,21 @@ macro_rules! impl_Sqrt {
 impl_Sqrt!{for f32, f64}
 
 /// Return the cube-root of an array, element-wise.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::miscellaneous::*;
+///
+/// # fn main(){
+/// let arr1 = array![1.0, 8.0, 27.0, 64.0];
+/// let arr2 = array![1.0, 2.0, 3.0, 4.0];
+/// assert!(arr2.array_comparison(&arr1.cbrt()));
+/// # }
+/// ```
 pub trait Cbrt<A, D>
 where
     D: Dimension,
@@ -147,6 +219,25 @@ macro_rules! impl_Cbrt {
 impl_Cbrt!{for f32, ONE_THIRD_F32, f64, ONE_THIRD_F64}
 
 /// Return the element-wise square of the input.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::miscellaneous::*;
+///
+/// # fn main(){
+/// let arr1 = array![2.0, 4.0, 6.0, 8.0];
+/// let arr2 = array![4.0, 16.0, 36.0, 64.0];
+/// assert!(arr2.array_comparison(&arr1.square()));
+///
+/// let arr3 = array![2, 4, 6, 8];
+/// let arr4 = array![4, 16, 36, 64];
+/// assert_eq!(arr4, arr3.square());
+/// # }
+/// ```
 pub trait Square<A, D>
 where
     D: Dimension,
@@ -170,11 +261,26 @@ impl_Square!{ for usize, u32, pow, u8, u32, pow, u16, u32, pow, u32, u32, pow, u
 impl_Square!{ for isize, u32, pow, i8, u32, pow, i16, u32, pow, i32, u32, pow, i64, u32, pow, i128, u32, pow }
 impl_Square!{ for f32, f32, powf, f64, f64, powf }
 
-/// absolute
-/// Calculate the absolute value element-wise.
-
-/// sign
 /// Returns an element-wise indication of the sign of a number.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::miscellaneous::*;
+///
+/// # fn main(){
+/// let arr1 = array![-0.0, 4.0, -6.0, 8.0];
+/// let arr2 = array![0.0, 1.0, -1.0, 1.0];
+/// assert!(arr2.array_comparison(&arr1.sign()));
+///
+/// let arr3 = array![-0, 4, -6, 8];
+/// let arr4 = array![0, 1, -1, 1];
+/// assert_eq!(arr4, arr3.sign());
+/// # }
+/// ```
 pub trait Sign<A, D>
 where
     D: Dimension,
@@ -206,21 +312,15 @@ impl_Sign!{ for isize, i8, i16, i32, i64, i128, f32, f64 }
 
 /// heaviside
 /// Compute the Heaviside step function.
-
-/// nan_to_num
-/// Replace nan with zero and inf with large finite numbers.
-
-/// real_if_close
-/// If complex input returns a real array if complex parts are close to zero.
 ///
 
 /// interp
 /// One-dimensional linear interpolation.
+///
 
 #[cfg(test)]
 mod miscellaneous_tests {
-    use super::{clip, convolve, Cbrt, ConvolutionMode, Sign, Sqrt, Square};
-    use ndarray::*;
+    use super::{clip, convolve, ArrayComparisonFloat, Cbrt, ConvolutionMode, Sign, Sqrt, Square};
 
     #[test]
     fn convolve_test() {
@@ -282,35 +382,37 @@ mod miscellaneous_tests {
         let arr4 = array![0, 1, -1, 1];
         assert_eq!(arr4, arr3.sign());
     }
-
-    // helper
-    trait ArrayComparisonFloat<A, D>
-    where
-        D: Dimension,
-    {
-        fn array_comparison(&self, arr2: &Array<A, D>) -> bool;
-    }
-
-    macro_rules! impl_ArrayComparisonFloat {
-        (for $($t:ty),+) => {
-            $(impl<D: Dimension> ArrayComparisonFloat<$t, D> for Array<$t, D> {
-                fn array_comparison(&self, arr2: &Array<$t, D>) -> bool
-                {
-                    let mut iter1 = self.iter();
-                    let mut iter2 = arr2.iter();
-
-                    while let Some(r) = iter2.next() {
-                        let exp = iter1.next().unwrap();
-                        println!("Expected: {}, Res: {}", *exp, *r);
-                        if (*r - *exp).abs() > (1e-10 as $t) {
-                            return false;
-                        }
-                    }
-                    true
-                }
-            })*
-        };
-    }
-
-    impl_ArrayComparisonFloat!{for f32, f64}
 }
+
+/// Helper function used for testing comparison between 2 float arrays.
+///
+/// NOTE: Should probably be moved elsewhere
+pub trait ArrayComparisonFloat<A, D>
+where
+    D: Dimension,
+{
+    fn array_comparison(&self, arr2: &Array<A, D>) -> bool;
+}
+
+macro_rules! impl_ArrayComparisonFloat {
+    (for $($t:ty),+) => {
+        $(impl<D: Dimension> ArrayComparisonFloat<$t, D> for Array<$t, D> {
+            fn array_comparison(&self, arr2: &Array<$t, D>) -> bool
+            {
+                let mut iter1 = self.iter();
+                let mut iter2 = arr2.iter();
+
+                while let Some(r) = iter2.next() {
+                    let exp = iter1.next().unwrap();
+                    println!("Expected: {}, Res: {}", *exp, *r);
+                    if (*r - *exp).abs() > (1e-10 as $t) {
+                        return false;
+                    }
+                }
+                true
+            }
+        })*
+    };
+}
+
+impl_ArrayComparisonFloat!{for f32, f64}
