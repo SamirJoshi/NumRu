@@ -19,6 +19,3 @@ Online documentation for ``num_ru`` available [here](https://samirjoshi.github.i
 
 See the ``ndarray`` docs [here](https://docs.rs/ndarray/0.11.2/ndarray/) for information about the array crate.
 
-## Features
-TBD - will fill in as we go
-

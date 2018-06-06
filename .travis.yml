@@ -7,8 +7,10 @@ script:
 - cargo test --verbose --all
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
   cargo doc &&
   echo "<meta http-equiv=refresh content=0;url=`echo SamirJoshi/NumRu  | cut -d '/' -f 2`/index.html>" > target/doc/index.html &&
+  sudo pip install ghp-import &&
   ghp-import -n target/doc &&
   git push -fq https://${GH_TOKEN}@github.com/SamirJoshi/NumRu .git gh-pages
 env:
