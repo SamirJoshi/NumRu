@@ -1,5 +1,4 @@
-//! Arithmetics module implements Numpy routines listed at
-//! https://docs.scipy.org/doc/numpy/reference/routines.math.html#arithmetic-operations
+//! Arithmetics module implements Numpy routines listed [here](https://docs.scipy.org/doc/numpy/reference/routines.math.html#arithmetic-operations)
 //!
 //! add, multiply, divide and subtract already handled by ndarray lib
 
@@ -11,6 +10,19 @@ use std::{fmt::Debug, marker::Copy, ops::Mul};
 
 /// Return the reciprocal of the argument, element-wise.
 /// Calculates 1/x.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+/// # fn main(){
+/// let input_arr = array![1.0, 2.0, 4.0];
+/// let expected_arr = array![1.0, 0.5, 0.25];
+/// assert_eq!(input_arr.reciprocal(), expected_arr);
+/// # }
 pub trait Reciprocal<T, D>
 where
     D: Dimension,
@@ -28,7 +40,9 @@ macro_rules! impl_Reciprocal {
     };
 }
 
-impl_Reciprocal!{for usize, u32, u64, i32, i64, f32, f64}
+impl_Reciprocal!{ for usize, u8, u16, u32, u64, u128 }
+impl_Reciprocal!{ for isize, i8, i16, i32, i64, i128 }
+impl_Reciprocal!{ for f32, f64 }
 
 /// Returns the numerical positive, element-wise of an ndarray Array
 ///
@@ -42,9 +56,9 @@ impl_Reciprocal!{for usize, u32, u64, i32, i64, f32, f64}
 /// use ndarray::*;
 /// use num_ru::math::arithmetic::*;
 /// # fn main(){
-///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
-///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
-///     assert_eq!(positive(&arr), expected_arr);
+/// let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
+/// let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
+/// assert_eq!(positive(&arr), expected_arr);
 /// # }
 /// ```
 pub fn positive<A, D>(arr: &Array<A, D>) -> Array<A, D>
@@ -67,9 +81,9 @@ where
 /// use ndarray::*;
 /// use num_ru::math::arithmetic::*;
 /// # fn main(){
-///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
-///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
-///     assert_eq!(positive_rayon(&arr), expected_arr);
+/// let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
+/// let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
+/// assert_eq!(positive_rayon(&arr), expected_arr);
 /// # }
 /// ```
 pub fn positive_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
@@ -96,9 +110,9 @@ where
 /// use ndarray::*;
 /// use num_ru::math::arithmetic::*;
 /// # fn main(){
-///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
-///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
-///     assert_eq!(absolute(&arr), expected_arr);
+/// let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
+/// let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]];
+/// assert_eq!(absolute(&arr), expected_arr);
 /// # }
 /// ```
 pub fn absolute<A, D>(arr: &Array<A, D>) -> Array<A, D>
@@ -121,9 +135,9 @@ where
 /// use ndarray::*;
 /// use num_ru::math::arithmetic::*;
 /// # fn main(){
-///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
-///     let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
-///     assert_eq!(absolute_rayon(&arr), expected_arr);
+/// let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
+/// let expected_arr = array![[[5.0, 6.0], [7.0, 1.0]], [[1.0, 2.0], [3.0, 4.0]]].into_shared();
+/// assert_eq!(absolute_rayon(&arr), expected_arr);
 /// # }
 /// ```
 pub fn absolute_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
@@ -144,9 +158,9 @@ where
 /// use ndarray::*;
 /// use num_ru::math::arithmetic::*;
 /// # fn main(){
-///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
-///     let expected_arr = array![[[5.0, -6.0], [-7.0, 1.0]], [[-1.0, 2.0], [3.0, 4.0]]];
-///     assert_eq!(negative(&arr), expected_arr);
+/// let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]];
+/// let expected_arr = array![[[5.0, -6.0], [-7.0, 1.0]], [[-1.0, 2.0], [3.0, 4.0]]];
+/// assert_eq!(negative(&arr), expected_arr);
 /// # }
 /// ```
 pub fn negative<A, D>(arr: &Array<A, D>) -> Array<A, D>
@@ -167,9 +181,9 @@ where
 /// use ndarray::*;
 /// use num_ru::math::arithmetic::*;
 /// # fn main(){
-///     let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
-///     let expected_arr = array![[[5.0, -6.0], [-7.0, 1.0]], [[-1.0, 2.0], [3.0, 4.0]]].into_shared();
-///     assert_eq!(negative_rayon(&arr), expected_arr);
+/// let arr = array![[[-5.0, 6.0], [7.0, -1.0]], [[1.0, -2.0], [-3.0, -4.0]]].into_shared();
+/// let expected_arr = array![[[5.0, -6.0], [-7.0, 1.0]], [[-1.0, 2.0], [3.0, 4.0]]].into_shared();
+/// assert_eq!(negative_rayon(&arr), expected_arr);
 /// # }
 /// ```
 pub fn negative_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
@@ -185,6 +199,22 @@ where
 }
 
 /// First array elements raised to powers from second array, element-wise.
+///
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+///
+/// # fn main(){
+/// let arr1 = array![2.0, 3.0, 4.0];
+/// let arr2 = array![-1.0, 2.0, 2.5];
+/// let arr3 = array![0.5, 9.0, 32.0];
+/// assert_eq!(arr1.power(&arr2), arr3);
+/// # }
+/// ```
 pub trait Power<A, B, D>
 where
     D: Dimension,
@@ -215,23 +245,23 @@ impl_Power!{ for usize, u32, pow, u8, u32, pow, u16, u32, pow, u32, u32, pow, u6
 impl_Power!{ for isize, u32, pow, i8, u32, pow, i16, u32, pow, i32, u32, pow, i64, u32, pow, i128, u32, pow }
 impl_Power!{ for f32, f32, powf, f64, f64, powf }
 
-/// floor_divide
-/// Return the largest integer smaller or equal to the division of the inputs.
-
-/// float_power
-/// First array elements raised to powers from second array, element-wise.
-
-/// fmod
-/// Return the element-wise remainder of division.
-
-/// mod
 /// Return element-wise remainder of division.
 ///
-
-/// modf
-/// Return the fractional and integral parts of an array, element-wise.
-
-/// Return element-wise remainder of division.
+/// # Examples
+/// ```
+/// # #[macro_use]
+/// # extern crate ndarray;
+/// # extern crate num_ru;
+/// use ndarray::*;
+/// use num_ru::math::arithmetic::*;
+///
+/// # fn main(){
+/// let arr1 = array![10.0, 11.0, 12.0];
+/// let arr2 = array![3.0, 4.0, 5.0];
+/// let arr3 = array![1.0, 3.0, 2.0];
+/// assert_eq!(arr1.remainder(&arr2), arr3);
+/// # }
+/// ```
 pub trait Remainder<T, D>
 where
     D: Dimension,
@@ -256,7 +286,9 @@ macro_rules! impl_Remainder {
     };
 }
 
-impl_Remainder!{for usize, u32, u64, i32, i64, f32, f64}
+impl_Remainder!{ for usize, u8, u16, u32, u64, u128 }
+impl_Remainder!{ for isize, i8, i16, i32, i64, i128 }
+impl_Remainder!{ for f32, f64 }
 
 /// divmod
 /// Return element-wise quotient and remainder simultaneously.
