@@ -56,12 +56,11 @@ pub fn sum<A, D>(arr: &Array<A, D>) -> A
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::test::*;
 /// use num_ru::math::sumproddif::*;
 /// # fn main(){
 ///     let arr = array![[[5.0, 6.0], [7.0, 0.0]], [[1.0, 2.0], [3.0, 4.0]]];
 ///     let res_arr = array![5.0, 11.0, 18.0, 18.0, 19.0, 21.0, 24.0, 28.0];
-///     assert!(compare_arrays(&cumsum(&arr),&res_arr));
+///     assert_eq!(cumsum(&arr), res_arr);
 /// # }
 /// ```
 ///
@@ -88,12 +87,11 @@ pub fn cumsum<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize; 1]>>
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::test::*;
 /// use num_ru::math::sumproddif::*;
 /// # fn main(){
 ///     let arr = array![[[5.0, 6.0], [7.0, 0.0]], [[1.0, 2.0], [3.0, 4.0]]];
 ///     let res_arr = array![5.0, 30.0, 210.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-///     assert!(compare_arrays(&cumprod(&arr),&res_arr));
+///     assert_eq!(cumprod(&arr), res_arr);
 /// # }
 /// ```
 ///
@@ -121,11 +119,10 @@ pub fn cumprod<A, D>(arr: &Array<A, D>) -> Array<A, Dim<[usize;1]>>
 /// # extern crate num_ru;
 /// use ndarray::*;
 /// use num_ru::math::sumproddif::*;
-/// use num_ru::test::*;
 /// # fn main(){
-///     let arr = array![ 1.2 , 42.  ,  1.9 ,  3.56,  0.54,  9.4 ,  2.  ];
-///     let res_arr = array![ 40.8 , -40.1 ,   1.66,  -3.02,   8.86,  -7.4 ];
-///     assert!(compare_arrays(&ediff1d(&arr),&res_arr));
+///     let arr = array![ 1.2 , 42.  ,  1.9 ,  3.67,  0.54,  9.4 ,  2.  ];
+///     let res_arr = array![ 40.8 , -40.1 ,   1.77,  -3.13,   8.86,  -7.4 ];
+///     assert_eq!(ediff1d(&arr), res_arr);
 /// # }
 /// ```
 ///
@@ -213,9 +210,6 @@ pub fn sum_rayon<A, D>(arr: &ArcArray<A, D>) -> A
 mod sumproddif_tests {
     use math::sumproddif::*;
     use ndarray::*;
-    use num_traits;
-    use std;
-    use test::*;
 
     #[test]
     fn prod_test() {
@@ -244,7 +238,7 @@ mod sumproddif_tests {
         let res_arr = array![ 1.0,  3.0,  6.0, 10.0, 15.0, 21.0];
         // println!("res_arr {:?}", )
 
-        assert!(compare_arrays(&res_arr, &cumsum(&input_arr)));
+        assert_eq!(res_arr, cumsum(&input_arr));
     }
 
     #[test]

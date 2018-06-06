@@ -76,8 +76,6 @@ pub fn logaddexp2<A>(x1: A, x2: A) -> A
 mod tests {
     use math::explog::*;
     use ndarray::*;
-    use num_traits;
-    use std;
 
     #[test]
     fn exp_test() {
