@@ -16,7 +16,7 @@ fn sin_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), pi / 2.0);
         let expected_arr = Array::from_elem((50, 50, 50), 1.0);
-        let res_arr = sin(&input_arr);
+        let res_arr = sin(&input_arr).unwrap();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -38,7 +38,7 @@ fn arcsin_bench_large(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50, 50), 1.0);
         let expected_arr = Array::from_elem((50, 50, 50, 50), pi / 2.0);
-        let res_arr = arcsin(&input_arr);
+        let res_arr = arcsin(&input_arr).unwrap();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -59,7 +59,7 @@ fn cos_bench_large(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50, 50), 0.0);
         let expected_arr = Array::from_elem((50, 50, 50, 50), 1.0);
-        let res_arr = cos(&input_arr);
+        let res_arr = cos(&input_arr).unwrap();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -80,7 +80,7 @@ fn arctan_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), 1.0);
         let expected_arr = Array::from_elem((50, 50, 50), pi / 4.0);
-        let res_arr = arctan(&input_arr);
+        let res_arr = arctan(&input_arr).unwrap();
         assert_eq!(expected_arr, res_arr);
     });
 }
