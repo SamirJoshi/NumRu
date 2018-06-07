@@ -49,9 +49,11 @@ pub fn math_example() {
     let math_arr = ArcArray::random((100000, 50), Range::new(-0.5, 0.5));
     let _math_arr_neg = negative_rayon(&math_arr);
     let _math_arr_pos = positive_rayon(&math_arr);
-
+    
+    let test_normal_sin = 1.57_f32.sin();
+    println!("normal sin: {}", test_normal_sin);
     let _sin_arr = math_arr.sin();
     let _cos_arr = math_arr.cos();
     let tan_arr = math_arr.tan().unwrap();
-    let _orig_arr = arctan_rayon(&tan_arr);
+    let _orig_arr = tan_arr.atan();
 }
