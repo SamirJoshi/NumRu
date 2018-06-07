@@ -34,8 +34,8 @@ pub fn stats_example() {
     println!("Range: {}", range);
 
     // more statistics
-    let avg = mean_rayon(&arr);
-    let arr_std = std_dev_rayon(&arr);
+    let avg = arr.mean();
+    let arr_std = arr.std_dev();
     let arr_sum = sum_rayon(&arr);
     let arr_prod = prod_rayon(&arr);
     println!("Mean: {}", avg);
