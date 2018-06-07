@@ -7,28 +7,169 @@ use ndarray_parallel::prelude::*;
 use num_traits;
 
 
-/// Computes element-wise sine on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::sin;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![pi, pi / 2.0, 0.004];
-/// let res_arr = sin(&input_arr).unwrap();
-/// # }
-/// ```
-pub fn sin<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>,ShapeError>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    let sin_arr = Array::from_iter(arr.iter().map(|x| x.sin()));
-    sin_arr.into_shape(arr.raw_dim())
+pub trait NumRuTrig {
+    // type Elt = std::fmt::Debug + std::marker::Copy;
+    
+    fn sin(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn cos(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn tan(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+}
+
+impl<A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real, D: Dimension> NumRuTrig for Array<A,D> {
+    /// Computes element-wise sine on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![pi, pi / 2.0, 0.004];
+    /// let res_arr = input_arr.sin().unwrap();
+    /// # }
+    /// ```
+    fn sin(&self) -> Result<Self, ShapeError> 
+    {
+        let sin_arr = Array::from_iter(self.iter().map(|x| x.sin()));
+        sin_arr.into_shape(self.raw_dim())
+    }
+
+    /// Computes element-wise cosine on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
+    /// let res_arr = input_arr.cos().unwrap();
+    /// # }
+    /// ```
+    fn cos(&self) -> Result<Self, ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| x.cos()));
+        res_arr.into_shape(self.raw_dim())
+    }
+
+    /// Computes element-wise tangent on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
+    /// let res_arr = input_arr.tan().unwrap();
+    /// # }
+    /// ```
+    fn tan(&self) -> Result<Self,ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| {
+            x.tan()
+        }));
+        res_arr.into_shape(self.raw_dim())
+    }
+
+
+}
+
+impl<A: std::fmt::Debug + std::marker::Copy + std::marker::Sync + std::marker::Send + num_traits::real::Real, D: Dimension> NumRuTrig for ArcArray<A,D> {
+
+    /// Computes element-wise sine on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![pi, pi / 2.0, 0.004].into_shared();
+    /// let res_arr = input_arr.sin();
+    /// # }
+    /// ```
+    fn sin(&self) -> Result<Self, ShapeError>
+    {
+        let mut sin_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut sin_arr)
+            .and(self)
+            .par_apply(|sin_arr, &s| {
+            *sin_arr = s.sin();
+        });
+        Ok(sin_arr)
+    }
+
+    /// Computes element-wise cosine on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]].into_shared();
+    /// let res_arr = input_arr.cos();
+    /// # }
+    /// ```
+    fn cos(&self) -> Result<Self, ShapeError>
+    {
+        let mut cos_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut cos_arr).and(self).par_apply(|cos_arr, &s| {
+            *cos_arr = s.cos();
+        });
+        Ok(cos_arr)
+    }
+
+    /// Computes element-wise tangent on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]].into_shared();
+    /// let res_arr = input_arr.tan();
+    /// # }
+    /// ```
+    fn tan(&self) -> Result<Self, ShapeError>
+    {
+        let mut tan_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut tan_arr).and(self).par_apply(|tan_arr, &s| {
+            *tan_arr = s.tan();
+        });
+        Ok(tan_arr)
+    }
+
+
 }
 
 /// Computes element-wise sine on an ndarray ArcArray
@@ -102,7 +243,6 @@ pub fn cos<A, D>(arr: &Array<A, D>) -> Result<Array<A, D>, ShapeError>
 /// let res_arr = cos_rayon(&input_arr);
 /// # }
 /// ```
-//TODO: Handle Unwrap
 pub fn cos_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
     where D: Dimension,
       A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
@@ -440,7 +580,7 @@ mod compare_arrays_tests {
 #[cfg(test)]
 mod trig_tests {
     use std;
-    use super::{sin, sin_rayon, cos, cos_rayon, tan, tan_rayon, compare_arrays, compare_arc_arrays};
+    use super::{compare_arrays, compare_arc_arrays, NumRuTrig};
 
     const TAN_INF : f64 = 16331239353195370.0;
 
@@ -449,18 +589,17 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![pi, pi / 2.0];
         let expected_arr = array![0.0, 1.0];
-        let res_arr = sin(&input_arr).unwrap();
+        let res_arr = input_arr.sin().unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
-
     }
 
     #[test]
     fn sin_tests_rayon() {
         let pi = std::f64::consts::PI;
-        let input_arr_arc = array![pi, pi / 2.0].into_shared();
-        let expected_arr_arc = array![0.0, 1.0].into_shared();
-        let res_arr_arc = sin_rayon(&input_arr_arc);
-        assert!(compare_arc_arrays(&expected_arr_arc, &res_arr_arc));
+        let input_arr = array![pi, pi / 2.0].into_shared();
+        let expected_arr = array![0.0, 1.0].into_shared();
+        let res_arr = input_arr.sin().unwrap();
+        assert!(compare_arc_arrays(&expected_arr, &res_arr));
     }
 
     #[test]
@@ -468,17 +607,17 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![pi, pi / 2.0, 0.0];
         let expected_arr = array![-1.0, 0.0, 1.0];
-        let res_arr = cos(&input_arr).unwrap();
+        let res_arr = input_arr.cos().unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 
     #[test]
     fn cos_tests_rayon() {
         let pi = std::f64::consts::PI;
-        let input_arr_arc = array![pi, pi / 2.0, 0.0].into_shared();
-        let expected_arr_arc = array![-1.0, 0.0, 1.0].into_shared();
-        let res_arr_arc = cos_rayon(&input_arr_arc);
-        assert!(compare_arc_arrays(&expected_arr_arc, &res_arr_arc));
+        let input_arr = array![pi, pi / 2.0, 0.0].into_shared();
+        let expected_arr = array![-1.0, 0.0, 1.0].into_shared();
+        let res_arr = input_arr.cos().unwrap();
+        assert!(compare_arc_arrays(&expected_arr, &res_arr));
     }
 
     #[test]
@@ -486,7 +625,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi];
         let expected_arr = array![0.0, 1.0, TAN_INF, 0.0];
-        let res_arr = tan(&input_arr).unwrap();
+        let res_arr = input_arr.tan().unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 
@@ -495,7 +634,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi].into_shared();
         let expected_arr = array![0.0, 1.0, TAN_INF, 0.0].into_shared();
-        let res_arr = tan_rayon(&input_arr);
+        let res_arr = input_arr.tan().unwrap();
         assert!(compare_arc_arrays(&expected_arr, &res_arr));
     }
 }

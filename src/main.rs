@@ -50,8 +50,8 @@ pub fn math_example() {
     let _math_arr_neg = negative_rayon(&math_arr);
     let _math_arr_pos = positive_rayon(&math_arr);
 
-    let _sin_arr = sin_rayon(&math_arr);
-    let _cos_arr = cos_rayon(&math_arr);
-    let tan_arr = tan_rayon(&math_arr);
+    let _sin_arr = math_arr.sin();
+    let _cos_arr = math_arr.cos();
+    let tan_arr = math_arr.tan().unwrap();
     let _orig_arr = arctan_rayon(&tan_arr);
 }
