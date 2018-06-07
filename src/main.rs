@@ -26,9 +26,9 @@ pub fn stats_example() {
     println!("Created array - beginning stats");
 
     // basic statistics
-    let min_elem = amin_rayon(&arr);
-    let max_elem = amax_rayon(&arr);
-    let range = ptp_rayon(&arr);
+    let min_elem = arr.amin();
+    let max_elem = arr.amax();
+    let range = arr.ptp();
     println!("Minimum element: {}", min_elem);
     println!("Maximum element: {}", max_elem);
     println!("Range: {}", range);
