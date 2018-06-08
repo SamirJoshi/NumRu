@@ -6,6 +6,7 @@ use num_traits;
 pub trait NumRuAverages {
     type Elt: std::fmt::Debug + std::marker::Copy + std::cmp::PartialOrd + 
     num_traits::real::Real + std::ops::Add + std::ops::Div + std::ops::Mul + std::ops::Sub;
+
     fn mean(&self) -> Self::Elt;
     fn var(&self) -> Self::Elt;
     fn std_dev(&self) -> Self::Elt;
