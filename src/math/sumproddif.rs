@@ -39,7 +39,6 @@ impl<A: std::fmt::Debug + std::marker::Copy + num_traits::identities::Zero + num
         self.iter().fold(A::one(), |acc, x| acc * *x)
     }
 
-
     /// Returns the sum across an ndarray Array
     ///
     /// # Examples

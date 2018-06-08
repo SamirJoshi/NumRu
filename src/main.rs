@@ -47,8 +47,8 @@ pub fn stats_example() {
 
 pub fn math_example() {
     let math_arr = ArcArray::random((100000, 50), Range::new(-0.5, 0.5));
-    let _math_arr_neg = negative_rayon(&math_arr);
-    let _math_arr_pos = positive_rayon(&math_arr);
+    let _math_arr_neg = math_arr.negative();
+    let _math_arr_pos = math_arr.positive();
     
     let test_normal_sin = 1.57_f32.sin();
     println!("normal sin: {}", test_normal_sin);

@@ -16,7 +16,7 @@ fn negative_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), 1.0);
         let expected_arr = Array::from_elem((50, 50, 50), -1.0);
-        let res_arr = negative(&input_arr);
+        let res_arr = input_arr.negative();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -26,7 +26,7 @@ fn negative_bench_large(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50, 50), 1.0);
         let expected_arr = Array::from_elem((50, 50, 50, 50), -1.0);
-        let res_arr = negative(&input_arr);
+        let res_arr = input_arr.negative();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -72,7 +72,7 @@ fn negative_bench_mid_rayon(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
         let expected_arr = ArcArray::from_elem((50, 50, 50), -1.0);
-        let res_arr = negative_rayon(&input_arr);
+        let res_arr = input_arr.negative();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -82,7 +82,7 @@ fn negative_bench_large_rayon(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
         let expected_arr = ArcArray::from_elem((50, 50, 50, 50), -1.0);
-        let res_arr = negative_rayon(&input_arr);
+        let res_arr = input_arr.negative();
         assert_eq!(expected_arr, res_arr);
     });
 }
