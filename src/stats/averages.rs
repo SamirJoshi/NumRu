@@ -128,9 +128,8 @@ impl<A: std::fmt::Debug + std::marker::Copy + std::cmp::PartialOrd +
             (*sorted_elem[(num_elem / 2) as usize]).clone()
         }
     }
-
-
 }
+
 impl<A: std::fmt::Debug + std::marker::Copy + std::marker::Sync + std::marker::Send + std::cmp::PartialOrd + 
     num_traits::real::Real + std::ops::Add + std::ops::Div + std::ops::Mul + std::ops::Sub, D: Dimension> NumRuAverages
     for ArcArray<A, D> {

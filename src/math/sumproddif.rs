@@ -3,6 +3,10 @@ use ndarray_parallel::prelude::*;
 use num_traits;
 use std;
 
+
+// pub trait NumRuSPD {
+// }
+
 /// Returns the product of an ndarray Array
 ///
 /// # Examples
@@ -209,7 +213,6 @@ pub fn sum_rayon<A, D>(arr: &ArcArray<A, D>) -> A
 #[cfg(test)]
 mod sumproddif_tests {
     use math::sumproddif::*;
-    use ndarray::*;
 
     #[test]
     fn prod_test() {

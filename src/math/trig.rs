@@ -22,6 +22,10 @@ pub trait NumRuTrig {
         where Self: std::marker::Sized;
     fn atan(&self) -> Result<Self, ShapeError>
         where Self: std::marker::Sized;
+    fn to_degrees(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn to_radians(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
 }
 
 impl<A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real, D: Dimension> NumRuTrig for Array<A,D> {
@@ -168,6 +172,28 @@ impl<A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real, D: Dimensi
     {
         let res_arr = Array::from_iter(self.iter().map(|x| x.atan()));
         res_arr.into_shape(self.raw_dim())
+    }
+
+    /// Convert from radians to degrees element-wise for an ndarray ArcArray
+    fn to_degrees(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(180.0 / std::f64::consts::PI).unwrap();
+        let mut res_arr = Array::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
+
+    /// Convert from degrees to radians element-wise for an ndarray ArcArray
+    fn to_radians(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(std::f64::consts::PI / 180.0).unwrap();
+        let mut res_arr = Array::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
     }
 }
 
@@ -335,32 +361,32 @@ impl<A: std::fmt::Debug + std::marker::Copy + std::marker::Sync + std::marker::S
         });
         Ok(res_arr)
     }
+
+    /// Convert from radians to degrees element-wise for an ndarray ArcArray
+    fn to_degrees(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(180.0 / std::f64::consts::PI).unwrap();
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
+
+    /// Convert from degrees to radians element-wise for an ndarray ArcArray
+    fn to_radians(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(std::f64::consts::PI / 180.0).unwrap();
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
+
 }
 
-/// Convert from radians to degrees
-pub fn deg2rad<D>(arr: &Array<f64, D>) -> Result<Array<f64, D>,ShapeError>
-    where D: Dimension,
-{
-    //TODO: change to actually handle the error
-    //TODO: implement for a generic type
-    let conv_factor: f64 = 180.0 / std::f64::consts::PI;
-
-    let res_arr = arr.clone();
-    let res_arr_2 = &res_arr * conv_factor;
-    res_arr_2.into_shape(arr.raw_dim())
-}
-
-/// Convert from degrees to radians
-pub fn rad2deg<D>(arr: &Array<f64, D>) -> Result<Array<f64, D>,ShapeError>
-    where D: Dimension,
-{
-    let conv_factor: f64 = std::f64::consts::PI / 180.0;
-
-    let res_arr = arr.clone();
-    let res_arr_2 = &res_arr * conv_factor;
-    res_arr_2.into_shape(arr.raw_dim())
-}
-
+// Testing functions 
 pub fn compare_arc_arrays<D>(expected_arr: &ArcArray<f64, D>, res_arr: &ArcArray<f64, D>) -> bool
     where D: Dimension,
 {

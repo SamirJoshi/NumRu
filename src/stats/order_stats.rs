@@ -1,11 +1,10 @@
 use ndarray::*;
 use std;
 use ndarray_parallel::prelude::*;
-use num_traits;
 
 pub trait NumRuOrderStats {
     type Elt: std::fmt::Debug + std::marker::Copy + std::cmp::PartialOrd + 
-        std::ops::Sub + num_traits::real::Real;
+        std::ops::Sub;
 
     fn amin(&self) -> Self::Elt;
     fn amax(&self) -> Self::Elt;
@@ -14,7 +13,7 @@ pub trait NumRuOrderStats {
 }
 
 impl<A: std::fmt::Debug + std::marker::Copy + std::cmp::PartialOrd + 
-    std::ops::Sub + num_traits::real::Real, D: Dimension> NumRuOrderStats
+    std::ops::Sub<Output=A>, D: Dimension> NumRuOrderStats
     for Array<A, D> {
     type Elt = A;
 
@@ -138,7 +137,7 @@ impl<A: std::fmt::Debug + std::marker::Copy + std::cmp::PartialOrd +
 
 impl<A: std::fmt::Debug + std::marker::Copy + std::cmp::PartialOrd + 
     std::marker::Sync + std::marker::Send + 
-    std::ops::Sub + num_traits::real::Real, D: Dimension> NumRuOrderStats
+    std::ops::Sub<Output=A>, D: Dimension> NumRuOrderStats
     for ArcArray<A, D> {
     type Elt = A;
 
@@ -265,8 +264,8 @@ mod amin_tests {
 
     #[test]
     fn amin_test_1d(){
-        let arr = array![5., 3., 5., 2., 1.];
-        assert_eq!(arr.amin(), 1.);
+        let arr = array![5, 3, 5, 2, 1];
+        assert_eq!(arr.amin(), 1);
         let arr2 = array![8., 8., 8., 8., 8.];
         assert_eq!(arr2.amin(), 8.);
         let arr3 = array![1., 3., 5., 2., 1.];
@@ -307,7 +306,6 @@ mod amin_tests {
 #[cfg(test)]
 mod amax_tests {
     use super::NumRuOrderStats;
-    use ndarray::*;
 
     #[test]
     fn amax_rayon_test_1d(){
