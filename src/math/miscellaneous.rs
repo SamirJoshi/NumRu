@@ -28,65 +28,74 @@ pub enum ConvolutionMode {
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::math::miscellaneous::*;
+/// use num_ru::math::miscellaneous::{Convolve, ConvolutionMode};
 ///
 /// # fn main(){
 /// let arr1 = array![1.0, 2.0, 3.0];
 /// let arr2 = array![0.0, 1.0, 0.5];
 /// let arr3 = array![0.0, 1.0, 2.5, 4.0, 1.5];
-/// assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Full), arr3);
+/// assert_eq!(arr1.convolve(&arr2, ConvolutionMode::Full), arr3);
 ///
 /// let arr4 = array![1.0, 2.5, 4.0];
-/// assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Same), arr4);
+/// assert_eq!(arr1.convolve(&arr2, ConvolutionMode::Same), arr4);
 ///
 /// let arr5 = array![2.5];
-/// assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Valid), arr5);
+/// assert_eq!(arr1.convolve(&arr2, ConvolutionMode::Valid), arr5);
 /// # }
 /// ```
-pub fn convolve<A>(
-    arr1: &Array<A, Dim<[usize; 1]>>,
-    arr2: &Array<A, Dim<[usize; 1]>>,
-    mode: ConvolutionMode,
-) -> Array<A, Dim<[usize; 1]>>
-where
-    A: Debug + Copy + PartialOrd + Add<Output = A> + Mul<Output = A> + Zero,
+pub trait Convolve<A> {
+    fn convolve(
+        &self,
+        arr2: &Array<A, Dim<[usize; 1]>>,
+        mode: ConvolutionMode,
+    ) -> Array<A, Dim<[usize; 1]>>;
+}
+
+impl<A: Debug + Copy + PartialOrd + Add<Output = A> + Mul<Output = A> + Zero> Convolve<A>
+    for Array<A, Dim<[usize; 1]>>
 {
-    // init vars and output arrays
-    let m = arr1.len();
-    let n = arr2.len();
+    fn convolve(
+        &self,
+        arr2: &Array<A, Dim<[usize; 1]>>,
+        mode: ConvolutionMode,
+    ) -> Array<A, Dim<[usize; 1]>> {
+        // init vars and output arrays
+        let m = self.len();
+        let n = arr2.len();
 
-    let out_size = m + n - 1;
-    let mut out = Array1::<A>::zeros(out_size);
+        let out_size = m + n - 1;
+        let mut out = Array1::<A>::zeros(out_size);
 
-    // perform convolution calculation
-    // TODO: Consider FFT convolution as implemented in scipy
-    for i in 0..out_size {
-        let mut elem: Option<A> = None;
-        let x = min(i, m - 1);
-        for a in (0..=x).rev() {
-            let b = i - a;
-            if b < n {
-                let to_add = arr1[[a]] * arr2[[b]];
-                match elem {
-                    Some(x) => elem = Some(x + to_add),
-                    None => elem = Some(to_add),
+        // perform convolution calculation
+        // TODO: Consider FFT convolution as implemented in scipy
+        for i in 0..out_size {
+            let mut elem: Option<A> = None;
+            let x = min(i, m - 1);
+            for a in (0..=x).rev() {
+                let b = i - a;
+                if b < n {
+                    let to_add = self[[a]] * arr2[[b]];
+                    match elem {
+                        Some(x) => elem = Some(x + to_add),
+                        None => elem = Some(to_add),
+                    }
                 }
             }
+
+            out[[i]] = elem.unwrap();
         }
 
-        out[[i]] = elem.unwrap();
-    }
-
-    // return convolution according to mode requested
-    match mode {
-        ConvolutionMode::Full => out,
-        ConvolutionMode::Same => {
-            let s = max(m, n);
-            _centered(&out, out_size, s)
-        }
-        ConvolutionMode::Valid => {
-            let s = max(m, n) - min(m, n) + 1;
-            _centered(&out, out_size, s)
+        // return convolution according to mode requested
+        match mode {
+            ConvolutionMode::Full => out,
+            ConvolutionMode::Same => {
+                let s = max(m, n);
+                _centered(&out, out_size, s)
+            }
+            ConvolutionMode::Valid => {
+                let s = max(m, n) - min(m, n) + 1;
+                _centered(&out, out_size, s)
+            }
         }
     }
 }
@@ -116,36 +125,37 @@ where
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::math::miscellaneous::*;
+/// use num_ru::math::miscellaneous::Clip;
 ///
 /// # fn main(){
 /// let arr1 = array![[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]];
 /// let arr2 = array![[3, 3, 3, 4, 5], [6, 7, 8, 8, 8]];
-/// assert_eq!(clip(&arr1, 3, 8), arr2);
+/// assert_eq!(arr1.clip(3, 8), arr2);
 ///
 /// let arr3 = array![[-1.0, -2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]];
 /// let arr4 = array![[3.0, 3.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 8.0, 8.0]];
-/// assert_eq!(clip(&arr3, 3.0, 8.0), arr4);
+/// assert_eq!(arr3.clip(3.0, 8.0), arr4);
 /// # }
 /// ```
-pub fn clip<A, D>(arr: &Array<A, D>, min: A, max: A) -> Array<A, D>
-where
-    A: Debug + Copy + PartialOrd,
-    D: Dimension,
-{
-    // error chain stuff here to check valid inputs
+pub trait Clip<A, D> {
+    fn clip(&self, min: A, max: A) -> Array<A, D>;
+}
+impl<A: Debug + Copy + PartialOrd, D: Dimension> Clip<A, D> for Array<A, D> {
+    fn clip(&self, min: A, max: A) -> Array<A, D> {
+        // error chain stuff here to check valid inputs
 
-    // perform clipping
-    // candidate for parallelization?
-    arr.mapv(|x| {
-        if x < min {
-            min
-        } else if x > max {
-            max
-        } else {
-            x
-        }
-    })
+        // perform clipping
+        // candidate for parallelization?
+        self.mapv(|x| {
+            if x < min {
+                min
+            } else if x > max {
+                max
+            } else {
+                x
+            }
+        })
+    }
 }
 
 /// Return the positive square-root of an array, element-wise.
@@ -156,7 +166,7 @@ where
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::math::miscellaneous::*;
+/// use num_ru::math::miscellaneous::{Sqrt, ArrayComparisonFloat};
 ///
 /// # fn main(){
 /// let arr1 = array![1.0, 4.0, 9.0, 16.0];
@@ -191,7 +201,7 @@ impl_Sqrt!{for f32, f64}
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::math::miscellaneous::*;
+/// use num_ru::math::miscellaneous::{Cbrt, ArrayComparisonFloat};
 ///
 /// # fn main(){
 /// let arr1 = array![1.0, 8.0, 27.0, 64.0];
@@ -226,7 +236,7 @@ impl_Cbrt!{for f32, ONE_THIRD_F32, f64, ONE_THIRD_F64}
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::math::miscellaneous::*;
+/// use num_ru::math::miscellaneous::{Square, ArrayComparisonFloat};
 ///
 /// # fn main(){
 /// let arr1 = array![2.0, 4.0, 6.0, 8.0];
@@ -269,7 +279,7 @@ impl_Square!{ for f32, f32, powf, f64, f64, powf }
 /// # extern crate ndarray;
 /// # extern crate num_ru;
 /// use ndarray::*;
-/// use num_ru::math::miscellaneous::*;
+/// use num_ru::math::miscellaneous::{Sign, ArrayComparisonFloat};
 ///
 /// # fn main(){
 /// let arr1 = array![-0.0, 4.0, -6.0, 8.0];
@@ -320,31 +330,31 @@ impl_Sign!{ for isize, i8, i16, i32, i64, i128, f32, f64 }
 
 #[cfg(test)]
 mod miscellaneous_tests {
-    use super::{clip, convolve, ArrayComparisonFloat, Cbrt, ConvolutionMode, Sign, Sqrt, Square};
+    use super::{ArrayComparisonFloat, Cbrt, Clip, ConvolutionMode, Convolve, Sign, Sqrt, Square};
 
     #[test]
     fn convolve_test() {
         let arr1 = array![1.0, 2.0, 3.0];
         let arr2 = array![0.0, 1.0, 0.5];
         let arr3 = array![0.0, 1.0, 2.5, 4.0, 1.5];
-        assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Full), arr3);
+        assert_eq!(arr1.convolve(&arr2, ConvolutionMode::Full), arr3);
 
         let arr4 = array![1.0, 2.5, 4.0];
-        assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Same), arr4);
+        assert_eq!(arr1.convolve(&arr2, ConvolutionMode::Same), arr4);
 
         let arr5 = array![2.5];
-        assert_eq!(convolve(&arr1, &arr2, ConvolutionMode::Valid), arr5);
+        assert_eq!(arr1.convolve(&arr2, ConvolutionMode::Valid), arr5);
     }
 
     #[test]
     fn clip_test() {
         let arr1 = array![[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]];
         let arr2 = array![[3, 3, 3, 4, 5], [6, 7, 8, 8, 8]];
-        assert_eq!(clip(&arr1, 3, 8), arr2);
+        assert_eq!(arr1.clip(3, 8), arr2);
 
         let arr3 = array![[-1.0, -2.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 9.0, 10.0]];
         let arr4 = array![[3.0, 3.0, 3.0, 4.0, 5.0], [6.0, 7.0, 8.0, 8.0, 8.0]];
-        assert_eq!(clip(&arr3, 3.0, 8.0), arr4);
+        assert_eq!(arr3.clip(3.0, 8.0), arr4);
     }
 
     #[test]
