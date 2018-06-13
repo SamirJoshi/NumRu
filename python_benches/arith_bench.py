@@ -18,6 +18,11 @@ def sum_bench_mid():
     assert np.sum(input_arr) == 125000.0
     return
 
+def sum_bench_large():
+    input_arr = np.full((50, 50, 50, 50), 1.0)
+    assert np.sum(input_arr) == 6250000.0
+    return
+
 def prod_bench_mid():
     input_arr = np.full((50, 50, 50), 1.0)
     assert np.prod(input_arr) == 1.0
@@ -41,6 +46,7 @@ def bench_arith():
     bench("negative_bench_mid")
     bench("negative_bench_large")
     bench("sum_bench_mid")
+    bench("sum_bench_large")
     bench("prod_bench_mid")
     bench("prod_bench_large")
 

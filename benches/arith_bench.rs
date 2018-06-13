@@ -16,7 +16,7 @@ fn negative_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), 1.0);
         let expected_arr = Array::from_elem((50, 50, 50), -1.0);
-        let res_arr = negative(&input_arr);
+        let res_arr = input_arr.negative();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -26,7 +26,7 @@ fn negative_bench_large(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50, 50), 1.0);
         let expected_arr = Array::from_elem((50, 50, 50, 50), -1.0);
-        let res_arr = negative(&input_arr);
+        let res_arr = input_arr.negative();
         assert_eq!(expected_arr, res_arr);
     });
 }
@@ -35,8 +35,17 @@ fn negative_bench_large(b: &mut Bencher) {
 fn sum_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), 1.0);
-        let res = sum(&input_arr);
+        let res = input_arr.sum();
         assert_eq!(res, 125000.0);
+    });
+}
+
+#[bench]
+fn sum_bench_large(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = Array::from_elem((50, 50, 50, 50), 1.0);
+        let res = input_arr.sum();
+        assert_eq!(res, 6250000.0);
     });
 }
 
@@ -44,7 +53,7 @@ fn sum_bench_mid(b: &mut Bencher) {
 fn prod_bench_mid(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50), 1.0);
-        let res = prod(&input_arr);
+        let res = input_arr.prod();
         assert_eq!(res, 1.0);
     });
 }
@@ -53,36 +62,45 @@ fn prod_bench_mid(b: &mut Bencher) {
 fn prod_bench_large(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = Array::from_elem((50, 50, 50, 50), 1.0);
-        let res = prod(&input_arr);
+        let res = input_arr.prod();
         assert_eq!(res, 1.0);
     });
 }
 
-//#[bench]
-//fn negative_bench_mid_rayon(b: &mut Bencher) {
-//    b.iter(|| {
-//        let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
-//        let expected_arr = ArcArray::from_elem((50, 50, 50), -1.0);
-//        let res_arr = negative(&input_arr);
-//        assert_eq!(expected_arr, res_arr);
-//    });
-//}
-//
-//#[bench]
-//fn negative_bench_large_rayon(b: &mut Bencher) {
-//    b.iter(|| {
-//        let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
-//        let expected_arr = ArcArray::from_elem((50, 50, 50, 50), -1.0);
-//        let res_arr = negative(&input_arr);
-//        assert_eq!(expected_arr, res_arr);
-//    });
-//}
+#[bench]
+fn negative_bench_mid_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
+        let expected_arr = ArcArray::from_elem((50, 50, 50), -1.0);
+        let res_arr = input_arr.negative();
+        assert_eq!(expected_arr, res_arr);
+    });
+}
+
+#[bench]
+fn negative_bench_large_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
+        let expected_arr = ArcArray::from_elem((50, 50, 50, 50), -1.0);
+        let res_arr = input_arr.negative();
+        assert_eq!(expected_arr, res_arr);
+    });
+}
+
+#[bench]
+fn sum_bench_large_rayon(b: &mut Bencher) {
+    b.iter(|| {
+        let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
+        let res = input_arr.sum();
+        assert_eq!(res, 6250000.0);
+    });
+}
 
 #[bench]
 fn sum_bench_mid_rayon(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
-        let res = sum_rayon(&input_arr);
+        let res = input_arr.sum();
         assert_eq!(res, 125000.0);
     });
 }
@@ -91,7 +109,7 @@ fn sum_bench_mid_rayon(b: &mut Bencher) {
 fn prod_bench_mid_rayon(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = ArcArray::from_elem((50, 50, 50), 1.0);
-        let res = prod_rayon(&input_arr);
+        let res = input_arr.prod();
         assert_eq!(res, 1.0);
     });
 }
@@ -100,7 +118,7 @@ fn prod_bench_mid_rayon(b: &mut Bencher) {
 fn prod_bench_large_rayon(b: &mut Bencher) {
     b.iter(|| {
         let input_arr = ArcArray::from_elem((50, 50, 50, 50), 1.0);
-        let res = prod_rayon(&input_arr);
+        let res = input_arr.prod();
         assert_eq!(res, 1.0);
     });
 }

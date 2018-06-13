@@ -1,35 +1,59 @@
-#[macro_use]
 extern crate ndarray;
+extern crate ndarray_rand;
 extern crate num_ru;
+extern crate num_traits;
+extern crate rand;
 
 use ndarray::*;
-use num_ru::*;
 use num_ru::stats::order_stats::*;
 use num_ru::stats::averages::*;
 use num_ru::math::trig::*;
+use num_ru::math::sumproddif::*;
+use num_ru::math::arithmetic::*;
+use ndarray_rand::RandomExt;
+use rand::distributions::Range;
 
 pub fn main() {
-    test_function();
-    let arr = array![2, 3, 4];
-    let mut arr_2d = array![[[5, 6], [7, 0]], [[1, 2], [3, 4]]];
+    for _i in 0..5 {
+        stats_example();
+        math_example();
+    }
+}
 
-    let mut big_arr = Array::zeros((5, 6, 7));
-    big_arr[[2, 3, 4]] = 15;
+pub fn stats_example() {
+    // create a random dataset
+    let arr = ArcArray::random((100000, 50), Range::new(0., 1.));
+    println!("Created array - beginning stats");
 
-    println!("arr: {}", arr);
-    println!("arr: {}", arr[0]);
-    let m = amax(&mut arr_2d);
-    println!("max: {}", m);
-    println!("max: {}", amax(&big_arr));
-//    println!("max: {}", amax_parallelized(&arr_3d));
-    let arr_f = array![2.0, 3.0, 4.0];
-    println!("mean: {}", mean(&arr_f));
+    // basic statistics
+    let min_elem = arr.amin();
+    let max_elem = arr.amax();
+    let range = arr.ptp();
+    println!("Minimum element: {}", min_elem);
+    println!("Maximum element: {}", max_elem);
+    println!("Range: {}", range);
 
-    let pi = std::f64::consts::PI;
-    let input_arr = array![pi, pi / 2.0];
-    let res = num_ru::math::trig::sin(&input_arr);
-    println!("sin res:{}", res);
-    let res = sin(&input_arr);
-    println!("sin res:{}", res);
+    // more statistics
+    let avg = arr.mean();
+    let arr_std = arr.std_dev();
+    let arr_sum = arr.sum();
+    let arr_prod = arr.prod();
+    println!("Mean: {}", avg);
+    println!("Standard Deviation: {}", arr_std);
+    println!("Sum: {}", arr_sum);
+    println!("Product: {}", arr_prod);
+    println!("\n");
+}
 
+pub fn math_example() {
+    let math_arr = ArcArray::random((100000, 50), Range::new(-0.5, 0.5));
+    let _math_arr_neg = math_arr.negative();
+    let _math_arr_pos = math_arr.positive();
+    
+    let test_normal_sin = 1.57_f32.sin();
+    println!("normal sin: {}", test_normal_sin);
+    let _sin_arr = math_arr.sin();
+    let _cos_arr = math_arr.cos();
+    let tan_arr = math_arr.tan().unwrap();
+    let _orig_arr = tan_arr.atan();
 }

@@ -1,379 +1,392 @@
+//! Trigonometric Math Module
+//! Computes standard trig functions element wise
+
 use std;
 use ndarray::*;
 use ndarray_parallel::prelude::*;
 use num_traits;
 
 
-/// Computes element-wise sine on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::sin;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![pi, pi / 2.0, 0.004];
-/// let res_arr = sin(&input_arr);
-/// # }
-/// ```
-pub fn sin<A, D>(arr: &Array<A, D>) -> Array<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    //TODO: change to actually handle the error
-    let sin_arr = Array::from_iter(arr.iter().map(|x| x.sin()));
-    sin_arr.into_shape(arr.raw_dim()).unwrap()
+pub trait NumRuTrig {
+    // type Elt = std::fmt::Debug + std::marker::Copy;
+    
+    fn sin(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn cos(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn tan(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn asin(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn acos(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn atan(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn to_degrees(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
+    fn to_radians(&self) -> Result<Self, ShapeError>
+        where Self: std::marker::Sized;
 }
 
-/// Computes element-wise sine on an ndarray ArcArray
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::sin_rayon;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![pi, pi / 2.0, 0.004].into_shared();
-/// let res_arr = sin_rayon(&input_arr);
-/// # }
-/// ```
-pub fn sin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
-        std::marker::Sync + std::marker::Send,
-{
-    let mut sin_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut sin_arr).and(arr).par_apply(|sin_arr, &arr| {
-        *sin_arr = arr.sin();
-    });
-    sin_arr
+impl<A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real, D: Dimension> NumRuTrig for Array<A,D> {
+    /// Computes element-wise sine on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![pi, pi / 2.0, 0.004];
+    /// let res_arr = input_arr.sin().unwrap();
+    /// # }
+    /// ```
+    fn sin(&self) -> Result<Self, ShapeError> 
+    {
+        let sin_arr = Array::from_iter(self.iter().map(|x| x.sin()));
+        sin_arr.into_shape(self.raw_dim())
+    }
+
+    /// Computes element-wise cosine on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
+    /// let res_arr = input_arr.cos().unwrap();
+    /// # }
+    /// ```
+    fn cos(&self) -> Result<Self, ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| x.cos()));
+        res_arr.into_shape(self.raw_dim())
+    }
+
+    /// Computes element-wise tangent on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
+    /// let res_arr = input_arr.tan().unwrap();
+    /// # }
+    /// ```
+    fn tan(&self) -> Result<Self,ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| {
+            x.tan()
+        }));
+        res_arr.into_shape(self.raw_dim())
+    }
+
+    /// Computes element-wise inverse sine on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let two: f64 = 2.0;
+    /// let input_arr = array![0.0, two.sqrt() / 2.0, 1.0];
+    /// let res_arr = input_arr.asin().unwrap();
+    /// assert_eq!(input_arr, res_arr.sin().unwrap());
+    /// # }
+    /// ```
+    fn asin(&self) -> Result<Self,ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| x.asin()));
+        res_arr.into_shape(self.raw_dim())
+    }
+
+    /// Computes element-wise inverse cosine on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::{NumRuTrig, compare_arrays};
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let two: f64 = 2.0;
+    /// let three: f64 = 3.0;
+    /// let input_arr = array![0.0, two.sqrt() / 2.0, 0.5, three.sqrt() / 2.0, 1.0];
+    /// let expect_arr = array![pi / 2.0, pi / 4.0, pi / 3.0, pi / 6.0, 0.0];
+    /// let res_arr = input_arr.acos().unwrap();
+    /// assert!(compare_arrays(&expect_arr, &res_arr));
+    /// assert!(compare_arrays(&input_arr, &res_arr.cos().unwrap()));
+    /// # }
+    /// ```
+    fn acos(&self) -> Result<Self,ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| x.acos()));
+        res_arr.into_shape(self.raw_dim())
+    }
+    
+    /// Computes element-wise inverse tangent on an ndarray Array
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::{NumRuTrig, compare_arrays};
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let two: f64 = 2.0;
+    /// let three: f64 = 3.0;
+    /// let input_arr = array![[0.0, 1.0], [three.sqrt(), three.sqrt() / 3.0]];
+    /// let expect_arr = array![[0.0, pi / 4.0], [pi / 3.0, pi / 6.0]];
+    /// let res_arr = input_arr.atan().unwrap();
+    /// assert!(compare_arrays(&expect_arr, &res_arr));
+    /// # }
+    /// ```
+    fn atan(&self) -> Result<Self,ShapeError>
+    {
+        let res_arr = Array::from_iter(self.iter().map(|x| x.atan()));
+        res_arr.into_shape(self.raw_dim())
+    }
+
+    /// Convert from radians to degrees element-wise for an ndarray ArcArray
+    fn to_degrees(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(180.0 / std::f64::consts::PI).unwrap();
+        let mut res_arr = Array::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
+
+    /// Convert from degrees to radians element-wise for an ndarray ArcArray
+    fn to_radians(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(std::f64::consts::PI / 180.0).unwrap();
+        let mut res_arr = Array::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
 }
 
-/// Computes element-wise cosine on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::cos;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
-/// let res_arr = cos(&input_arr);
-/// # }
-/// ```
-pub fn cos<A, D>(arr: &Array<A, D>) -> Array<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    //TODO: change to actually handle the error
-    let res_arr = Array::from_iter(arr.iter().map(|x| x.cos()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
+impl<A: std::fmt::Debug + std::marker::Copy + std::marker::Sync + std::marker::Send + num_traits::real::Real, D: Dimension> NumRuTrig for ArcArray<A,D> {
+
+    /// Computes element-wise sine on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![pi, pi / 2.0, 0.004].into_shared();
+    /// let res_arr = input_arr.sin();
+    /// # }
+    /// ```
+    fn sin(&self) -> Result<Self, ShapeError>
+    {
+        let mut sin_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut sin_arr)
+            .and(self)
+            .par_apply(|sin_arr, &s| {
+            *sin_arr = s.sin();
+        });
+        Ok(sin_arr)
+    }
+
+    /// Computes element-wise cosine on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]].into_shared();
+    /// let res_arr = input_arr.cos();
+    /// # }
+    /// ```
+    fn cos(&self) -> Result<Self, ShapeError>
+    {
+        let mut cos_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut cos_arr).and(self).par_apply(|cos_arr, &s| {
+            *cos_arr = s.cos();
+        });
+        Ok(cos_arr)
+    }
+
+    /// Computes element-wise tangent on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]].into_shared();
+    /// let res_arr = input_arr.tan();
+    /// # }
+    /// ```
+    fn tan(&self) -> Result<Self, ShapeError>
+    {
+        let mut tan_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut tan_arr).and(self).par_apply(|tan_arr, &s| {
+            *tan_arr = s.tan();
+        });
+        Ok(tan_arr)
+    }
+
+    /// Computes element-wise inverse sine on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::NumRuTrig;
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let two: f64 = 2.0;
+    /// let input_arr = array![0.0, two.sqrt() / 2.0, 1.0].into_shared();
+    /// let res_arr = input_arr.asin().unwrap();
+    /// assert_eq!(input_arr, res_arr.sin().unwrap());
+    /// # }
+    /// ```
+    fn asin(&self) -> Result<Self, ShapeError>
+    {
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s.asin();
+        });
+        Ok(res_arr)
+    }
+
+    /// Computes element-wise inverse cosine on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::{NumRuTrig, compare_arc_arrays};
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let two: f64 = 2.0;
+    /// let three: f64 = 3.0;
+    /// let input_arr = array![0.0, two.sqrt() / 2.0, 0.5, three.sqrt() / 2.0, 1.0].into_shared();
+    /// let expect_arr = array![pi / 2.0, pi / 4.0, pi / 3.0, pi / 6.0, 0.0].into_shared();
+    /// let res_arr = input_arr.acos().unwrap();
+    /// assert!(compare_arc_arrays(&expect_arr, &res_arr));
+    /// assert!(compare_arc_arrays(&input_arr, &res_arr.cos().unwrap()));
+    /// # }
+    /// ```
+    fn acos(&self) -> Result<Self, ShapeError>
+    {
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s.acos();
+        });
+        Ok(res_arr)
+    }
+
+    /// Computes element-wise inverse tangent on an ndarray ArcArray
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate ndarray;
+    /// # extern crate num_ru;
+    /// use ndarray::*;
+    /// use num_ru::math::trig::{NumRuTrig, compare_arc_arrays};
+    ///
+    /// # fn main(){
+    /// let pi = std::f64::consts::PI;
+    /// let two: f64 = 2.0;
+    /// let three: f64 = 3.0;
+    /// let input_arr = array![[0.0, 1.0], [three.sqrt(), three.sqrt() / 3.0]].into_shared();
+    /// let expect_arr = array![[0.0, pi / 4.0], [pi / 3.0, pi / 6.0]].into_shared();
+    /// let res_arr = input_arr.atan().unwrap();
+    /// assert!(compare_arc_arrays(&expect_arr, &res_arr));
+    /// # }
+    /// ```
+    fn atan(&self) -> Result<Self, ShapeError>
+    {
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s.atan();
+        });
+        Ok(res_arr)
+    }
+
+    /// Convert from radians to degrees element-wise for an ndarray ArcArray
+    fn to_degrees(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(180.0 / std::f64::consts::PI).unwrap();
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
+
+    /// Convert from degrees to radians element-wise for an ndarray ArcArray
+    fn to_radians(&self) -> Result<Self,ShapeError>
+    {
+        let conv_factor = A::from(std::f64::consts::PI / 180.0).unwrap();
+        let mut res_arr = ArcArray::from_elem(self.dim(), A::from(0.0).unwrap());
+        Zip::from(&mut res_arr).and(self).par_apply(|res_arr, &s| {
+            *res_arr = s * conv_factor;
+        });
+        Ok(res_arr)
+    }
+
 }
 
-/// Computes element-wise cosine on an ndarray ArcArray
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::cos_rayon;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]].into_shared();
-/// let res_arr = cos_rayon(&input_arr);
-/// # }
-/// ```
-pub fn cos_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
-        std::marker::Sync + std::marker::Send,
-{
-    let mut cos_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut cos_arr).and(arr).par_apply(|cos_arr, &arr| {
-        *cos_arr = arr.cos();
-    });
-    cos_arr
-}
-
-/// Computes element-wise tangent on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::tan;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]];
-/// let res_arr = tan(&input_arr);
-/// # }
-/// ```
-pub fn tan<A, D>(arr: &Array<A, D>) -> Array<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    //TODO: change to actually handle the error
-    let res_arr = Array::from_iter(arr.iter().map(|x| {
-        x.tan()
-    }));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
-}
-
-/// Computes element-wise tangent on an ndarray ArcArray
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::tan_rayon;
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let input_arr = array![[0.0, 3.0 * pi / 4.0, pi], [pi / 2.0, 0.004, pi / 4.0]].into_shared();
-/// let res_arr = tan_rayon(&input_arr);
-/// # }
-/// ```
-pub fn tan_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
-        std::marker::Sync + std::marker::Send,
-{
-    let mut tan_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut tan_arr).and(arr).par_apply(|tan_arr, &arr| {
-        *tan_arr = arr.tan();
-    });
-    tan_arr
-}
-
-/// Computes element-wise inverse sine on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::{sin_rayon, arcsin_rayon};
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let two: f64 = 2.0;
-/// let input_arr = array![0.0, two.sqrt() / 2.0, 1.0].into_shared();
-/// let res_arr = arcsin_rayon(&input_arr);
-/// assert_eq!(input_arr, sin_rayon(&res_arr));
-/// # }
-/// ```
-pub fn arcsin<A, D>(arr: &Array<A, D>) -> Array<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    //TODO: change to actually handle the error
-    let res_arr = Array::from_iter(arr.iter().map(|x| x.asin()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
-}
-
-
-/// Computes element-wise inverse cosine on an ndarray ArcArray
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::{cos_rayon, arccos_rayon, compare_arc_arrays};
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let two: f64 = 2.0;
-/// let three: f64 = 3.0;
-/// let input_arr = array![0.0, two.sqrt() / 2.0, 0.5, three.sqrt() / 2.0, 1.0].into_shared();
-/// let expect_arr = array![pi / 2.0, pi / 4.0, pi / 3.0, pi / 6.0, 0.0].into_shared();
-/// let res_arr = arccos_rayon(&input_arr);
-/// assert!(compare_arc_arrays(&expect_arr, &res_arr));
-/// assert!(compare_arc_arrays(&input_arr, &cos_rayon(&res_arr)));
-/// # }
-/// ```
-pub fn arcsin_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
-        std::marker::Sync + std::marker::Send,
-{
-    let mut res_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut res_arr).and(arr).par_apply(|res_arr, &arr| {
-        *res_arr = arr.asin();
-    });
-    res_arr
-}
-
-/// Computes element-wise inverse cosine on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::{cos, arccos, compare_arrays};
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let two: f64 = 2.0;
-/// let three: f64 = 3.0;
-/// let input_arr = array![0.0, two.sqrt() / 2.0, 0.5, three.sqrt() / 2.0, 1.0];
-/// let expect_arr = array![pi / 2.0, pi / 4.0, pi / 3.0, pi / 6.0, 0.0];
-/// let res_arr = arccos(&input_arr);
-/// assert!(compare_arrays(&expect_arr, &res_arr));
-/// assert!(compare_arrays(&input_arr, &cos(&res_arr)));
-/// # }
-/// ```
-pub fn arccos<A, D>(arr: &Array<A, D>) -> Array<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    //TODO: change to actually handle the error
-    let res_arr = Array::from_iter(arr.iter().map(|x| x.acos()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
-}
-
-/// Computes element-wise inverse cosine on an ndarray ArcArray
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::{cos_rayon, arccos_rayon, compare_arc_arrays};
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let two: f64 = 2.0;
-/// let three: f64 = 3.0;
-/// let input_arr = array![0.0, two.sqrt() / 2.0, 0.5, three.sqrt() / 2.0, 1.0].into_shared();
-/// let expect_arr = array![pi / 2.0, pi / 4.0, pi / 3.0, pi / 6.0, 0.0].into_shared();
-/// let res_arr = arccos_rayon(&input_arr);
-/// assert!(compare_arc_arrays(&expect_arr, &res_arr));
-/// assert!(compare_arc_arrays(&input_arr, &cos_rayon(&res_arr)));
-/// # }
-/// ```
-pub fn arccos_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
-        std::marker::Sync + std::marker::Send,
-{
-    let mut res_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut res_arr).and(arr).par_apply(|res_arr, &arr| {
-        *res_arr = arr.acos();
-    });
-    res_arr
-}
-
-/// Computes element-wise inverse tangent on an ndarray Array
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::{tan, arctan, compare_arrays};
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let two: f64 = 2.0;
-/// let three: f64 = 3.0;
-/// let input_arr = array![[0.0, 1.0], [three.sqrt(), three.sqrt() / 3.0]];
-/// let expect_arr = array![[0.0, pi / 4.0], [pi / 3.0, pi / 6.0]];
-/// let res_arr = arctan(&input_arr);
-/// assert!(compare_arrays(&expect_arr, &res_arr));
-/// # }
-/// ```
-pub fn arctan<A, D>(arr: &Array<A, D>) -> Array<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real,
-{
-    //TODO: change to actually handle the error
-    let res_arr = Array::from_iter(arr.iter().map(|x| x.atan()));
-    res_arr.into_shape(arr.raw_dim()).unwrap()
-}
-
-/// Computes element-wise inverse tangent on an ndarray ArcArray
-///
-/// # Examples
-/// ```
-/// # #[macro_use]
-/// # extern crate ndarray;
-/// # extern crate num_ru;
-/// use ndarray::*;
-/// use num_ru::math::trig::{arctan_rayon, compare_arc_arrays};
-///
-/// # fn main(){
-/// let pi = std::f64::consts::PI;
-/// let two: f64 = 2.0;
-/// let three: f64 = 3.0;
-/// let input_arr = array![[0.0, 1.0], [three.sqrt(), three.sqrt() / 3.0]].into_shared();
-/// let expect_arr = array![[0.0, pi / 4.0], [pi / 3.0, pi / 6.0]].into_shared();
-/// let res_arr = arctan_rayon(&input_arr);
-/// assert!(compare_arc_arrays(&expect_arr, &res_arr));
-/// # }
-/// ```
-pub fn arctan_rayon<A, D>(arr: &ArcArray<A, D>) -> ArcArray<A, D>
-    where D: Dimension,
-      A: std::fmt::Debug + std::marker::Copy + num_traits::real::Real +
-        std::marker::Sync + std::marker::Send,
-{
-    let mut res_arr = ArcArray::from_elem(arr.dim(), A::from(0.0).unwrap());
-    Zip::from(&mut res_arr).and(arr).par_apply(|res_arr, &arr| {
-        *res_arr = arr.atan();
-    });
-    res_arr
-}
-
-/// Convert from radians to degrees 
-pub fn deg2rad<D>(arr: &Array<f64, D>) -> Array<f64, D>
-    where D: Dimension,
-{
-    //TODO: change to actually handle the error 
-    //TODO: implement for a generic type
-    let conv_factor: f64 = 180.0 / std::f64::consts::PI;
-
-    let res_arr = arr.clone();
-    let res_arr_2 = &res_arr * conv_factor;
-    res_arr_2.into_shape(arr.raw_dim()).unwrap()
-}
-
-/// Convert from degrees to radians 
-pub fn rad2deg<D>(arr: &Array<f64, D>) -> Array<f64, D>
-    where D: Dimension,
-{
-    let conv_factor: f64 = std::f64::consts::PI / 180.0;
-
-    let res_arr = arr.clone();
-    let res_arr_2 = &res_arr * conv_factor;
-    res_arr_2.into_shape(arr.raw_dim()).unwrap()
-}
-
+// Testing functions 
 pub fn compare_arc_arrays<D>(expected_arr: &ArcArray<f64, D>, res_arr: &ArcArray<f64, D>) -> bool
     where D: Dimension,
 {
@@ -435,7 +448,7 @@ mod compare_arrays_tests {
 #[cfg(test)]
 mod trig_tests {
     use std;
-    use super::{sin, sin_rayon, cos, cos_rayon, tan, tan_rayon, compare_arrays, compare_arc_arrays};
+    use super::{compare_arrays, compare_arc_arrays, NumRuTrig};
 
     const TAN_INF : f64 = 16331239353195370.0;
 
@@ -444,18 +457,17 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![pi, pi / 2.0];
         let expected_arr = array![0.0, 1.0];
-        let res_arr = sin(&input_arr);
+        let res_arr = input_arr.sin().unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
-
     }
 
     #[test]
     fn sin_tests_rayon() {
         let pi = std::f64::consts::PI;
-        let input_arr_arc = array![pi, pi / 2.0].into_shared();
-        let expected_arr_arc = array![0.0, 1.0].into_shared();
-        let res_arr_arc = sin_rayon(&input_arr_arc);
-        assert!(compare_arc_arrays(&expected_arr_arc, &res_arr_arc));
+        let input_arr = array![pi, pi / 2.0].into_shared();
+        let expected_arr = array![0.0, 1.0].into_shared();
+        let res_arr = input_arr.sin().unwrap();
+        assert!(compare_arc_arrays(&expected_arr, &res_arr));
     }
 
     #[test]
@@ -463,17 +475,17 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![pi, pi / 2.0, 0.0];
         let expected_arr = array![-1.0, 0.0, 1.0];
-        let res_arr = cos(&input_arr);
+        let res_arr = input_arr.cos().unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 
     #[test]
     fn cos_tests_rayon() {
         let pi = std::f64::consts::PI;
-        let input_arr_arc = array![pi, pi / 2.0, 0.0].into_shared();
-        let expected_arr_arc = array![-1.0, 0.0, 1.0].into_shared();
-        let res_arr_arc = cos_rayon(&input_arr_arc);
-        assert!(compare_arc_arrays(&expected_arr_arc, &res_arr_arc));
+        let input_arr = array![pi, pi / 2.0, 0.0].into_shared();
+        let expected_arr = array![-1.0, 0.0, 1.0].into_shared();
+        let res_arr = input_arr.cos().unwrap();
+        assert!(compare_arc_arrays(&expected_arr, &res_arr));
     }
 
     #[test]
@@ -481,7 +493,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi];
         let expected_arr = array![0.0, 1.0, TAN_INF, 0.0];
-        let res_arr = tan(&input_arr);
+        let res_arr = input_arr.tan().unwrap();
         assert!(compare_arrays(&expected_arr, &res_arr));
     }
 
@@ -490,7 +502,7 @@ mod trig_tests {
         let pi = std::f64::consts::PI;
         let input_arr = array![0.0, pi / 4.0, pi / 2.0, pi].into_shared();
         let expected_arr = array![0.0, 1.0, TAN_INF, 0.0].into_shared();
-        let res_arr = tan_rayon(&input_arr);
+        let res_arr = input_arr.tan().unwrap();
         assert!(compare_arc_arrays(&expected_arr, &res_arr));
     }
 }

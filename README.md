@@ -4,7 +4,8 @@
 
 ## Native Rust Implementation of NumPy Functions
 An implementation of the Math, Stats, and Random NumPy libraries built on top
-of ``ndarray`` (https://github.com/bluss/ndarray).
+of [``ndarray``](https://github.com/bluss/ndarray).
+
 
 ## Usage
 ```
@@ -14,9 +15,7 @@ extern crate num_ru;
 use num_ru::*;
 ```
 
-See some docs that we will write at some point too.
-See the ``ndarray`` docs at https://docs.rs/ndarray/0.11.2/ndarray/ for imformation about the array crate.
+Online documentation for ``num_ru`` available [here](https://samirjoshi.github.io/NumRu/num_ru/index.html).
 
-## Features
-TBD - will fill in as we go
+See the ``ndarray`` docs [here](https://docs.rs/ndarray/0.11.2/ndarray/) for information about the array crate.
 
