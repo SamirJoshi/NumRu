@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `NumRuEXP` trait in crate `num_ru`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, NumRuEXP">
+
+    <title>num_ru::math::explog::NumRuEXP - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css"
+          id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle">
+    <script src="../../../storage.js"></script>
+    
+
+    
+    
+</head>
+<body class="rustdoc trait">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
+        
+        <p class='location'>Trait NumRuEXP</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.exp">exp</a><a href="#tymethod.exp_m1">exp_m1</a><a href="#tymethod.exp2">exp2</a><a href="#tymethod.ln">ln</a><a href="#tymethod.log2">log2</a><a href="#tymethod.log10">log10</a><a href="#tymethod.ln_1p">ln_1p</a></div><a class="sidebar-title" href="#foreign-impls">Implementations on Foreign Types</a><div class="sidebar-links"><a href="#impl-NumRuEXP">Array&lt;A, D&gt;</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='../../index.html'>num_ru</a>::<wbr><a href='../index.html'>math</a>::<wbr><a href='index.html'>explog</a></p><script>window.sidebarCurrent = {name: 'NumRuEXP', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
+    </nav>
+
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../../theme.js"></script>
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Trait <a href='../../index.html'>num_ru</a>::<wbr><a href='../index.html'>math</a>::<wbr><a href='index.html'>explog</a>::<wbr><a class="trait" href=''>NumRuEXP</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#5-20' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait NumRuEXP {
+    fn <a href='#tymethod.exp' class='fnname'>exp</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+<div class='item-spacer'></div>    fn <a href='#tymethod.exp_m1' class='fnname'>exp_m1</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+<div class='item-spacer'></div>    fn <a href='#tymethod.exp2' class='fnname'>exp2</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+<div class='item-spacer'></div>    fn <a href='#tymethod.ln' class='fnname'>ln</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+<div class='item-spacer'></div>    fn <a href='#tymethod.log2' class='fnname'>log2</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+<div class='item-spacer'></div>    fn <a href='#tymethod.log10' class='fnname'>log10</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+<div class='item-spacer'></div>    fn <a href='#tymethod.ln_1p' class='fnname'>ln_1p</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;<br>&nbsp;&nbsp;&nbsp; <span class="where">where<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a></span>;
+}</pre></div>
+            <h2 id='required-methods' class='small-section-header'>
+              Required Methods<a href='#required-methods' class='anchor'></a>
+            </h2>
+            <div class='methods'>
+        <h3 id='tymethod.exp' class='method'><span id='exp.v' class='invisible'><code>fn <a href='#tymethod.exp' class='fnname'>exp</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><h3 id='tymethod.exp_m1' class='method'><span id='exp_m1.v' class='invisible'><code>fn <a href='#tymethod.exp_m1' class='fnname'>exp_m1</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><h3 id='tymethod.exp2' class='method'><span id='exp2.v' class='invisible'><code>fn <a href='#tymethod.exp2' class='fnname'>exp2</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><h3 id='tymethod.ln' class='method'><span id='ln.v' class='invisible'><code>fn <a href='#tymethod.ln' class='fnname'>ln</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><h3 id='tymethod.log2' class='method'><span id='log2.v' class='invisible'><code>fn <a href='#tymethod.log2' class='fnname'>log2</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><h3 id='tymethod.log10' class='method'><span id='log10.v' class='invisible'><code>fn <a href='#tymethod.log10' class='fnname'>log10</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3><h3 id='tymethod.ln_1p' class='method'><span id='ln_1p.v' class='invisible'><code>fn <a href='#tymethod.ln_1p' class='fnname'>ln_1p</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Self: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,&nbsp;</span></code></span></h3></div>
+                <h2 id='foreign-impls' class='small-section-header'>
+                  Implementations on Foreign Types<a href='#foreign-impls' class='anchor'></a>
+                </h2>
+            <h3 id='impl-NumRuEXP' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;A:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html" title="trait core::marker::Copy">Copy</a> + <a class="trait" href="../../../num_traits/real/trait.Real.html" title="trait num_traits::real::Real">Real</a>, D:&nbsp;<a class="trait" href="../../../ndarray/dimension/dimension_trait/trait.Dimension.html" title="trait ndarray::dimension::dimension_trait::Dimension">Dimension</a>&gt; <a class="trait" href="../../../num_ru/math/explog/trait.NumRuEXP.html" title="trait num_ru::math::explog::NumRuEXP">NumRuEXP</a> for <a class="type" href="../../../ndarray/type.Array.html" title="type ndarray::Array">Array</a>&lt;A, D&gt;</code><a href='#impl-NumRuEXP' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#22-173' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><span class='docblock autohide'><div class='impl-items'><h4 id='method.exp' class="method"><span id='exp.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.exp' class='fnname'>exp</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#40-44' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .exp() applied to each element</p>
+<h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">12.0</span>,<span class="number">32.0</span>],[<span class="number">0.0</span>,<span class="number">1.0</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">exp</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">12.0_f32</span>.<span class="ident">exp</span>(),<span class="number">32.0_f32</span>.<span class="ident">exp</span>()],
+                          [<span class="number">0.0_f32</span>.<span class="ident">exp</span>(),<span class="number">1.0_f32</span>.<span class="ident">exp</span>()]]);</pre>
+</div><h4 id='method.exp_m1' class="method"><span id='exp_m1.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.exp_m1' class='fnname'>exp_m1</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#62-66' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .exp_m1() applied to each element</p>
+<h1 id="examples-1" class="section-header"><a href="#examples-1">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">0.4</span>,<span class="number">0.8</span>],[<span class="number">9.43</span>,<span class="number">2.3</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">exp_m1</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">0.4_f32</span>.<span class="ident">exp_m1</span>(),<span class="number">0.8_f32</span>.<span class="ident">exp_m1</span>()],
+                          [<span class="number">9.43_f32</span>.<span class="ident">exp_m1</span>(),<span class="number">2.3_f32</span>.<span class="ident">exp_m1</span>()]]);</pre>
+</div><h4 id='method.exp2' class="method"><span id='exp2.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.exp2' class='fnname'>exp2</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#84-88' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .exp2() applied to each element</p>
+<h1 id="examples-2" class="section-header"><a href="#examples-2">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">3.8</span>,<span class="number">1.24</span>],[<span class="number">2.88</span>,<span class="number">23.3</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">exp2</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">3.8_f32</span>.<span class="ident">exp2</span>(),<span class="number">1.24_f32</span>.<span class="ident">exp2</span>()],
+                          [<span class="number">2.88_f32</span>.<span class="ident">exp2</span>(),<span class="number">23.3_f32</span>.<span class="ident">exp2</span>()]]);</pre>
+</div><h4 id='method.ln' class="method"><span id='ln.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.ln' class='fnname'>ln</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#105-109' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .ln() applied to each element</p>
+<h1 id="examples-3" class="section-header"><a href="#examples-3">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">2.2</span>,<span class="number">3.5</span>,<span class="number">1.0</span>,<span class="number">13.9</span>],[<span class="number">3.04</span>,<span class="number">93.1</span>,<span class="number">0.0</span>,<span class="number">1.0</span>],[<span class="number">13.0</span>,<span class="number">2.89</span>,<span class="number">3.09</span>,<span class="number">30.67</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">ln</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">2.2_f32</span>.<span class="ident">ln</span>(),<span class="number">3.5_f32</span>.<span class="ident">ln</span>(),<span class="number">1.0_f32</span>.<span class="ident">ln</span>(),<span class="number">13.9_f32</span>.<span class="ident">ln</span>()],[<span class="number">3.04_f32</span>.<span class="ident">ln</span>(),<span class="number">93.1_f32</span>.<span class="ident">ln</span>(),<span class="number">0.0_f32</span>.<span class="ident">ln</span>(),<span class="number">1.0_f32</span>.<span class="ident">ln</span>()],[<span class="number">13.0_f32</span>.<span class="ident">ln</span>(),<span class="number">2.89_f32</span>.<span class="ident">ln</span>(),<span class="number">3.09_f32</span>.<span class="ident">ln</span>(),<span class="number">30.67_f32</span>.<span class="ident">ln</span>()]]);</pre>
+</div><h4 id='method.log2' class="method"><span id='log2.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.log2' class='fnname'>log2</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#126-130' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .log2() applied to each element</p>
+<h1 id="examples-4" class="section-header"><a href="#examples-4">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">5.3</span>,<span class="number">8.58</span>,<span class="number">9.0</span>],[<span class="number">2.2</span>,<span class="number">44.4</span>,<span class="number">2.9</span>],[<span class="number">12.2</span>,<span class="number">94.0</span>,<span class="number">12.0</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">log2</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">5.3_f32</span>.<span class="ident">log2</span>(),<span class="number">8.58_f32</span>.<span class="ident">log2</span>(),<span class="number">9.0_f32</span>.<span class="ident">log2</span>()],[<span class="number">2.2_f32</span>.<span class="ident">log2</span>(),<span class="number">44.4_f32</span>.<span class="ident">log2</span>(),<span class="number">2.9_f32</span>.<span class="ident">log2</span>()],[<span class="number">12.2_f32</span>.<span class="ident">log2</span>(),<span class="number">94.0_f32</span>.<span class="ident">log2</span>(),<span class="number">12.0_f32</span>.<span class="ident">log2</span>()]]);</pre>
+</div><h4 id='method.log10' class="method"><span id='log10.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.log10' class='fnname'>log10</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#147-151' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .log10() applied to each element</p>
+<h1 id="examples-5" class="section-header"><a href="#examples-5">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">3.5</span>,<span class="number">4.95</span>,<span class="number">2.49</span>],[<span class="number">13.2</span>,<span class="number">45.0</span>,<span class="number">30.4</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">log10</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">3.5_f32</span>.<span class="ident">log10</span>(),<span class="number">4.95_f32</span>.<span class="ident">log10</span>(),<span class="number">2.49_f32</span>.<span class="ident">log10</span>()],[<span class="number">13.2_f32</span>.<span class="ident">log10</span>(),<span class="number">45.0_f32</span>.<span class="ident">log10</span>(),<span class="number">30.4_f32</span>.<span class="ident">log10</span>()]]);</pre>
+</div><h4 id='method.ln_1p' class="method"><span id='ln_1p.v-1' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='#method.ln_1p' class='fnname'>ln_1p</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self, <a class="struct" href="../../../ndarray/error/struct.ShapeError.html" title="struct ndarray::error::ShapeError">ShapeError</a>&gt;</code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/num_ru/math/explog.rs.html#168-172' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Returns an ndarray with .ln_1p() applied to each element</p>
+<h1 id="examples-6" class="section-header"><a href="#examples-6">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+
+<span class="kw">use</span> <span class="ident">ndarray</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">num_ru</span>::<span class="ident">math</span>::<span class="ident">explog</span>::<span class="kw-2">*</span>;
+    <span class="kw">let</span> <span class="ident">arr</span> <span class="op">=</span> <span class="macro">array</span><span class="macro">!</span>[[<span class="number">5.3</span>,<span class="number">4.34</span>],[<span class="number">18.2</span>,<span class="number">0.43</span>],[<span class="number">23.4</span>,<span class="number">2.04</span>]];
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arr</span>.<span class="ident">ln_1p</span>().<span class="ident">unwrap</span>(),<span class="macro">array</span><span class="macro">!</span>[[<span class="number">5.3_f32</span>.<span class="ident">ln_1p</span>(),<span class="number">4.34_f32</span>.<span class="ident">ln_1p</span>()],[<span class="number">18.2_f32</span>.<span class="ident">ln_1p</span>(),<span class="number">0.43_f32</span>.<span class="ident">ln_1p</span>()],[<span class="number">23.4_f32</span>.<span class="ident">ln_1p</span>(),<span class="number">2.04_f32</span>.<span class="ident">ln_1p</span>()]]);</pre>
+</div></div></span>
+        <h2 id='implementors' class='small-section-header'>
+          Implementors<a href='#implementors' class='anchor'></a>
+        </h2>
+        <ul class='item-list' id='implementors-list'>
+    </ul><script type="text/javascript">window.inlined_types=new Set([]);</script><script type="text/javascript" async
+                         src="../../../implementors/num_ru/math/explog/trait.NumRuEXP.js">
+                 </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt><kbd>?</kbd></dt>
+                    <dd>Show this help dialog</dd>
+                    <dt><kbd>S</kbd></dt>
+                    <dd>Focus the search field</dd>
+                    <dt><kbd>↑</kbd></dt>
+                    <dd>Move up in search results</dd>
+                    <dt><kbd>↓</kbd></dt>
+                    <dd>Move down in search results</dd>
+                    <dt><kbd>↹</kbd></dt>
+                    <dd>Switch tab</dd>
+                    <dt><kbd>&#9166;</kbd></dt>
+                    <dd>Go to active search result</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "num_ru";
+    </script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>

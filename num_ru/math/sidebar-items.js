@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["arithmetic","Arithmetics module implements Numpy routines listed here"],["explog",""],["miscellaneous","Miscellaneous module implements Numpy routines listed here"],["sumproddif",""],["trig","Trigonometric Math Module Computes standard trig functions element wise"]]});

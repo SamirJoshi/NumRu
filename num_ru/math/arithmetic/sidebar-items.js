@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["NumRuSigned",""],["Power","First array elements raised to powers from second array, element-wise."],["Reciprocal","Return the reciprocal of the argument, element-wise. Calculates 1/x."],["Remainder","Return element-wise remainder of division."]]});
